@@ -37,18 +37,29 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            // Disable CSRF for H2 console (only for development)
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/h2-console/**")
+            )
+            // Allow H2 console to be embedded in frames (only for development)
+            .headers(headers -> headers
+                .frameOptions(frame -> frame.sameOrigin())
+            )
             .authorizeHttpRequests(authorize -> authorize
                 // Public endpoints - no authentication required
-                .requestMatchers("/register", "/login", "/css/**", "/js/**").permitAll()
+                .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", 
+                                "/h2-console/**", "/error").permitAll()
                 // All other requests require authentication
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 // Enable form-based login
                 .loginPage("/login")
+                .defaultSuccessUrl("/", true)
                 .permitAll()
             )
             .logout(logout -> logout
+                .logoutSuccessUrl("/login?logout")
                 .permitAll()
             );
 
