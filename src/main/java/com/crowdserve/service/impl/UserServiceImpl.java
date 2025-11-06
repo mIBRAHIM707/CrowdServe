@@ -1,0 +1,93 @@
+package com.crowdserve.service.impl;
+
+import com.crowdserve.dto.UserRegistrationDto;
+import com.crowdserve.model.User;
+import com.crowdserve.repository.UserRepository;
+import com.crowdserve.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+/**
+ * Implementation of UserService interface.
+ * Handles user registration, authentication, and user management operations.
+ */
+@Service
+@Transactional
+public class UserServiceImpl implements UserService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    /**
+     * Constructor-based dependency injection for required dependencies.
+     *
+     * @param userRepository the repository for user data access
+     * @param passwordEncoder the BCrypt password encoder for secure password hashing
+     */
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    /**
+     * Registers a new user in the system.
+     * Validates that the email is unique, hashes the password, and persists the user.
+     *
+     * @param registrationDto the registration data containing user information
+     * @return the newly created and persisted User entity
+     * @throws IllegalStateException if a user with the given email already exists
+     */
+    @Override
+    public User registerNewUser(UserRegistrationDto registrationDto) {
+        // Check if user with this email already exists
+        Optional<User> existingUser = userRepository.findByEmail(registrationDto.email());
+        if (existingUser.isPresent()) {
+            throw new IllegalStateException(
+                "User with email '" + registrationDto.email() + "' already exists"
+            );
+        }
+
+        // Create new user entity
+        User newUser = new User();
+        newUser.setFullName(registrationDto.fullName());
+        newUser.setEmail(registrationDto.email());
+        
+        // Hash the password before saving (CRITICAL for security)
+        String hashedPassword = passwordEncoder.encode(registrationDto.password());
+        newUser.setPassword(hashedPassword);
+
+        // Save and return the new user
+        return userRepository.save(newUser);
+    }
+
+    /**
+     * Finds a user by their email address.
+     *
+     * @param email the email address to search for
+     * @return an Optional containing the user if found, or empty if not found
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    /**
+     * Retrieves a user by their ID.
+     *
+     * @param id the ID of the user to retrieve
+     * @return the User entity
+     * @throws RuntimeException if user is not found
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    }
+}

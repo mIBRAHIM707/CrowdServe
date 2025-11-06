@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrowdServe - Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .links {
+            margin-top: 20px;
+        }
+        a {
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
+        .info {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-left: 4px solid #007bff;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to CrowdServe! 🎉</h1>
+        <p>A localized, real-time crowdsourcing platform</p>
+        
+        <div class="info">
+            <h3>Development Mode Active</h3>
+            <p><strong>H2 Console:</strong> <a href="/h2-console" target="_blank">Access Database Console</a></p>
+            <p><strong>JDBC URL:</strong> jdbc:h2:mem:crowdserve</p>
+            <p><strong>Username:</strong> sa</p>
+            <p><strong>Password:</strong> (leave blank)</p>
+        </div>
+
+        <div class="links">
+            <h3>Navigation</h3>
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+        </div>
+
+        <div style="margin-top: 30px; color: #666; font-size: 0.9em;">
+            <p><strong>Project Status:</strong> Skeleton created successfully! ✅</p>
+            <p><strong>Next Steps:</strong> Implement service layer, create user registration/login functionality</p>
+        </div>
+    </div>
+</body>
+</html>
