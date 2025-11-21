@@ -54,6 +54,7 @@ public class UserServiceImpl implements UserService {
 
         // Create new user entity
         User newUser = new User();
+        newUser.setUsername(registrationDto.username());
         newUser.setFullName(registrationDto.fullName());
         newUser.setEmail(registrationDto.email());
         
