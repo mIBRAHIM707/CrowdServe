@@ -51,6 +51,8 @@ public class TaskServiceImpl implements TaskService {
         Task newTask = new Task();
         newTask.setTitle(taskDto.title());
         newTask.setDescription(taskDto.description());
+        newTask.setLocation(taskDto.location());
+        newTask.setReward(taskDto.reward());
         newTask.setStatus(TaskStatus.OPEN);
         newTask.setPoster(poster);
         newTask.setWorker(null); // No worker assigned initially
