@@ -24,6 +24,12 @@ public class TaskController {
         return "create-task";
     }
 
+    @GetMapping
+    public String showDashboard(Model model) {
+        // TODO: Get all open tasks and add to model
+        return "dashboard";
+    }
+
     @PostMapping("/create")
     public String createTask(@ModelAttribute TaskCreationDto taskDto) {
         // TODO: Call taskService.createTask(taskDto)
