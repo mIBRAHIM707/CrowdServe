@@ -118,4 +118,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .roles("USER")
                 .build();
     }
+
+    @Override
+    public User updateProfile(User user) {
+        // TODO: Implement profile update logic (Jagtaar)
+        return user;
+    }
 }
