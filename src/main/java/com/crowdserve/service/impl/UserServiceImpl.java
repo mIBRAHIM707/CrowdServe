@@ -15,9 +15,17 @@ import java.util.Optional;
  * Implementation of UserService interface.
  * Handles user registration, authentication, and user management operations.
  */
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+/**
+ * Implementation of UserService interface.
+ * Handles user registration, authentication, and user management operations.
+ */
 @Service
 @Transactional
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -90,5 +98,24 @@ public class UserServiceImpl implements UserService {
     public User getUserById(Long id) {
         return userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    }
+    @Override
+    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+        // Try finding by username first
+        User user = userRepository.findByUsername(usernameOrEmail);
+        
+        // If not found, try finding by email
+        if (user == null) {
+            user = userRepository.findByEmail(usernameOrEmail).orElse(null);
+        }
+
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with username or email: " + usernameOrEmail);
+        }
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .roles("USER")
+                .build();
     }
 }

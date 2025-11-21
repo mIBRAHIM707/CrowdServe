@@ -4,3 +4,13 @@ SELECT * FROM REPORTS TASKS USERS [42000-224]
 2025-11-21 21:32:48.395390+05:00 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM REPORTS TASKS [*]USERS USERS"; SQL statement:
 SELECT * FROM REPORTS TASKS USERS USERS [42000-224]
+2025-11-21 21:46:22.955388+05:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
+2025-11-21 21:47:40.490115+05:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
+2025-11-21 21:51:04.975467+05:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
+2025-11-21 21:53:19.023529+05:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]
+2025-11-21 21:55:51.980898+05:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]

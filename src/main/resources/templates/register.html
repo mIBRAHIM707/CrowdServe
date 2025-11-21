@@ -7,6 +7,9 @@
 <body>
   <h2>Create an Account</h2>
   <form th:action="@{/register}" th:object="${user}" method="post">
+    <label>Username:</label>
+    <input type="text" th:field="*{username}" required /><br><br>
+
     <label>Full Name:</label>
     <input type="text" th:field="*{fullName}" required /><br><br>
 
