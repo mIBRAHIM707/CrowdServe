@@ -41,6 +41,7 @@ class UserServiceImplTest {
     void setUp() {
         // Set up test data
         testRegistrationDto = new UserRegistrationDto(
+            "johndoe",
             "John Doe",
             "john.doe@example.com",
             "password123"
@@ -216,6 +217,7 @@ class UserServiceImplTest {
         String hashedPassword = "$2a$10$hashedPasswordValue";
         
         UserRegistrationDto dto = new UserRegistrationDto(
+            "testuser",
             "Test User",
             "test@example.com",
             plainPassword
