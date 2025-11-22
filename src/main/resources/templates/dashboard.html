@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Tasks Dashboard</title>
+    <style>table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#f0f0f0}</style>
+</head>
+<body>
+<h1>Open Tasks</h1>
+
+<div th:if="${#lists.isEmpty(tasks)}">
+    <p>No open tasks available.</p>
+</div>
+
+<table th:if="${!#lists.isEmpty(tasks)}">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Posted By</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="task : ${tasks}">
+            <td th:text="${task.title}">Title</td>
+            <td th:text="${task.description}">Description</td>
+            <td th:text="${task.status}">Status</td>
+            <td th:text="${task.poster != null ? task.poster.fullName : 'Unknown'}">Poster</td>
+        </tr>
+    </tbody>
+</table>
+
+<p><a th:href="@{/}">Home</a> | <a th:href="@{/tasks/create}">Create Task</a></p>
+
+</body>
+</html>
