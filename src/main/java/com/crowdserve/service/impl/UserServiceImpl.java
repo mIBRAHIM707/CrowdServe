@@ -119,9 +119,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .build();
     }
 
+    
     @Override
     public User updateProfile(User user) {
-        // TODO: Implement profile update logic (Jagtaar)
-        return user;
-    }
+    // Step 1: Fetch existing user
+    User existingUser = userRepository.findById(user.getId())
+            .orElseThrow(() -> new RuntimeException("User not found with id: " + user.getId()));
+
+    // Step 2: Update allowed fields only
+    existingUser.setFullName(user.getFullName());
+    existingUser.setBio(user.getBio());
+    // Step 3: Save updated user
+    return userRepository.save(existingUser);
+}
+
 }

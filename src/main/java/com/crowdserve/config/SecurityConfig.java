@@ -55,7 +55,8 @@ public class SecurityConfig {
             .formLogin(form -> form
                 // Enable form-based login
                 .loginPage("/login")
-                .defaultSuccessUrl("/", true)
+                // After successful login, redirect users to their profile page
+                .defaultSuccessUrl("/profile", true)
                 .permitAll()
             )
             .logout(logout -> logout
