@@ -21,7 +21,9 @@
                 <a class="btn btn-outline" th:href="@{/}">Home</a>
                 <a class="btn btn-outline" th:href="@{/profile}">Profile</a>
                 <a class="btn btn-outline" th:href="@{/tasks/create}">Create Task</a>
-                <a class="btn btn-primary" th:href="@{/logout}">Logout</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-primary">Logout</button>
+                </form>
             </div>
         </header>
 

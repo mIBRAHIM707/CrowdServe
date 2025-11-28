@@ -55,12 +55,15 @@ public class SecurityConfig {
             .formLogin(form -> form
                 // Enable form-based login
                 .loginPage("/login")
-                // After successful login, redirect users to their profile page
-                .defaultSuccessUrl("/profile", true)
+                // After successful login, redirect users to the dashboard
+                .defaultSuccessUrl("/tasks", true)
                 .permitAll()
             )
             .logout(logout -> logout
+                .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
                 .permitAll()
             );
 
