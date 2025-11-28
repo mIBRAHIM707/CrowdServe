@@ -32,7 +32,7 @@ public class TaskController {
 
     @GetMapping("/create")
     public String showCreateTaskForm(Model model) {
-        // TODO: Add empty TaskCreationDto to model
+        model.addAttribute("taskDto", new TaskCreationDto(null, null, null, null));
         return "create-task";
     }
 
@@ -52,17 +52,24 @@ public class TaskController {
     }
 
 @PostMapping("/create")
-    public String createTask(@ModelAttribute TaskCreationDto taskDto, Principal principal) {
-
-        // 1. Get identifier (email) of the currently logged-in user
-        String email = principal.getName();
-
-        // 2. Fetch User Entity from DB using the INJECTED instance (userRepository)
-        var user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalStateException("User not found with email: " + email));
-        // 3. Call service method to create task
-        taskService.createTask(taskDto, user);
-        return "redirect:/tasks";
+    public String createTask(@ModelAttribute("taskDto") TaskCreationDto taskDto, Principal principal, RedirectAttributes redirectAttributes) {
+        try {
+            // Get current user - try username first, then email
+            User user = userRepository.findByUsername(principal.getName());
+            if (user == null) {
+                user = userRepository.findByEmail(principal.getName())
+                    .orElseThrow(() -> new IllegalStateException("User not found"));
+            }
+            
+            // Create task
+            taskService.createTask(taskDto, user);
+            redirectAttributes.addFlashAttribute("successMessage", "Task created successfully!");
+            return "redirect:/tasks";
+            
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error creating task: " + e.getMessage());
+            return "redirect:/tasks/create";
+        }
     }
 
 
