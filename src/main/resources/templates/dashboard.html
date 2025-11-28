@@ -1,37 +1,96 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Tasks Dashboard</title>
-    <style>table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#f0f0f0}</style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>CrowdServe — Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
 </head>
 <body>
-<h1>Open Tasks</h1>
+    <div class="page">
+        <header class="app-header">
+            <div class="brand">
+                <div class="logo">CS</div>
+                <div>
+                    <h1>CrowdServe Dashboard</h1>
+                    <div class="meta">Open tasks feed — find work or assign workers</div>
+                </div>
+            </div>
 
-<div th:if="${#lists.isEmpty(tasks)}">
-    <p>No open tasks available.</p>
-</div>
+            <div class="controls">
+                <a class="btn btn-outline" th:href="@{/}">Home</a>
+                <a class="btn btn-outline" th:href="@{/profile}">Profile</a>
+                <a class="btn btn-outline" th:href="@{/tasks/create}">Create Task</a>
+                <a class="btn btn-primary" th:href="@{/logout}">Logout</a>
+            </div>
+        </header>
 
-<table th:if="${!#lists.isEmpty(tasks)}">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th>Posted By</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr th:each="task : ${tasks}">
-            <td th:text="${task.title}">Title</td>
-            <td th:text="${task.description}">Description</td>
-            <td th:text="${task.status}">Status</td>
-            <td th:text="${task.poster != null ? task.poster.fullName : 'Unknown'}">Poster</td>
-        </tr>
-    </tbody>
-</table>
+        <div class="layout">
+            <main>
+                <div class="panel">
+                    <h2>Open Tasks</h2>
 
-<p><a th:href="@{/}">Home</a> | <a th:href="@{/tasks/create}">Create Task</a></p>
+                    <div th:if="${#lists.isEmpty(tasks)}" class="empty">
+                        No open tasks right now. <a th:href="@{/tasks/create}">Create the first task</a>.
+                    </div>
 
+                    <div class="task-list" th:if="${!#lists.isEmpty(tasks)}">
+                        <div th:each="task : ${tasks}" class="task">
+                            <div class="task-left">
+                                <div class="task-title" th:text="${task.title}">Task title</div>
+                                <div class="task-desc" th:text="${task.description}">Short description of the task...</div>
+                                <div class="task-meta">
+                                    <span th:text="'Posted by: ' + (task.poster != null ? task.poster.fullName : 'Unknown')">Posted by: —</span>
+                                    <span th:text="'Reward: $' + (task.reward != null ? task.reward : 'N/A')">Reward: N/A</span>
+                                    <span th:text="'Location: ' + (task.location != null ? task.location : '')">Location: —</span>
+                                </div>
+                            </div>
+
+                            <div class="task-right">
+                                <!-- status (open/assigned/completed) -->
+                                <div th:switch="${task.status}">
+                                    <span th:case="'OPEN'" class="status status-open" th:text="${task.status}">OPEN</span>
+                                    <span th:case="'ASSIGNED'" class="status status-assigned" th:text="${task.status}">ASSIGNED</span>
+                                    <span th:case="'COMPLETED'" class="status status-completed" th:text="${task.status}">COMPLETED</span>
+                                    <span th:case="*" class="status" th:text="${task.status}">UNKNOWN</span>
+                                </div>
+
+                                <div class="mt-10">
+                                    <a th:href="@{|/tasks/${task.id}|}" class="btn btn-outline btn-sm">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+
+            <aside class="sidebar">
+                <div class="card">
+                    <div class="card-row">
+                        <div>
+                            <div class="card-heading">Quick Filters</div>
+                            <div class="small">Open / Assigned / Completed</div>
+                        </div>
+                        <div>
+                            <a th:href="@{/tasks?filter=open}" class="small">Open</a><br>
+                            <a th:href="@{/tasks?filter=assigned}" class="small">Assigned</a><br>
+                            <a th:href="@{/tasks?filter=completed}" class="small">Completed</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-heading">Stats</div>
+                    <div class="small">Total open: <span th:text="${#lists.size(tasks)}">0</span></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-heading">Help</div>
+                    <div class="small">Need help? Reach out to the team.</div>
+                </div>
+            </aside>
+        </div>
+    </div>
 </body>
 </html>
