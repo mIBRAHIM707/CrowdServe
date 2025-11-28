@@ -54,4 +54,25 @@ public interface TaskService {
      * @throws RuntimeException if user is not authorized or task not found
      */
     void deleteTask(Long taskId, User currentUser);
+
+    /**
+     * Assigns a worker to a task and changes status to ASSIGNED.
+     *
+     * @param taskId the ID of the task to assign
+     * @param worker the user to assign as worker
+     * @return the updated Task entity
+     * @throws RuntimeException if task not found
+     * @throws IllegalStateException if task is not in OPEN status
+     */
+    Task assignWorker(Long taskId, User worker);
+
+    /**
+     * Marks a task as completed.
+     *
+     * @param taskId the ID of the task to complete
+     * @return the updated Task entity
+     * @throws RuntimeException if task not found
+     * @throws IllegalStateException if task is not in ASSIGNED status
+     */
+    Task markCompleted(Long taskId);
 }
