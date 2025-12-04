@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CrowdServe — Reports Center</title>
+
+  <!-- Absolute path to ensure static resource resolution -->
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}" href="../static/css/dashboard.css">
+</head>
+<body>
+  <div class="page">
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo">CS</div>
+        <div>
+          <h1>Reports Center</h1>
+          <div class="meta">Download your platform analytics & task summaries</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <a class="btn btn-outline" th:href="@{/}">Home</a>
+        <a class="btn btn-outline" th:href="@{/dashboard}">Dashboard</a>
+        <a class="btn btn-primary" th:href="@{/logout}">Logout</a>
+      </div>
+    </header>
+
+    <div class="layout">
+      <main>
+        <div class="panel">
+          <h2>Available Reports</h2>
+
+          <div class="report-list">
+            <!-- Task Summary Report -->
+            <div class="report-card">
+              <div class="report-header">
+                <div class="report-title">Task Summary Report</div>
+                <div class="report-desc">Includes all tasks, statuses, assigned workers, timestamps, and budgets.</div>
+              </div>
+              <div class="report-footer">
+                <a th:href="@{/reports/download/task-summary}" class="btn btn-primary btn-sm">Download Report</a>
+              </div>
+            </div>
+
+            <!-- User Activity Report -->
+            <div class="report-card">
+              <div class="report-header">
+                <div class="report-title">User Activity Report</div>
+                <div class="report-desc">Shows logins, participation, assigned tasks, and completion patterns across your team.</div>
+              </div>
+              <div class="report-footer">
+                <a th:href="@{/reports/download/user-activity}" class="btn btn-primary btn-sm">Download Report</a>
+              </div>
+            </div>
+
+            <!-- Financial Report -->
+            <div class="report-card">
+              <div class="report-header">
+                <div class="report-title">Financial Report</div>
+                <div class="report-desc">Summaries of budgets, payments, cost distributions, and financial insights.</div>
+              </div>
+              <div class="report-footer">
+                <a th:href="@{/reports/download/finance}" class="btn btn-primary btn-sm">Download Report</a>
+              </div>
+            </div>
+
+            <!-- Platform Analytics Report -->
+            <div class="report-card">
+              <div class="report-header">
+                <div class="report-title">Platform Analytics Report</div>
+                <div class="report-desc">High-level analytics on usage trends, task volume, and platform growth metrics.</div>
+              </div>
+              <div class="report-footer">
+                <a th:href="@{/reports/download/platform-analytics}" class="btn btn-primary btn-sm">Download Report</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+
+      <aside class="sidebar">
+        <div class="card">
+          <div class="card-heading">About Reports</div>
+          <div class="small">Access comprehensive platform reports including task summaries, user activity, financial data, and analytics insights. All reports are generated fresh from your platform data.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-heading">Download Formats</div>
+          <div class="small">Reports are available as PDF and CSV formats depending on the report type. Choose the format that works best for your analysis.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-heading">Support</div>
+          <div class="small">Questions about your reports? <a href="#" class="link-primary">Contact our support team</a> for assistance.</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>
