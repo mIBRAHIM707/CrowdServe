@@ -1,9 +1,21 @@
 package com.crowdserve.controller;
 
+import com.crowdserve.model.User;
+import com.crowdserve.repository.TaskRepository;
+import com.crowdserve.repository.UserRepository;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfWriter;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
 
 /**
  * Controller for handling reports and analytics pages.
@@ -11,6 +23,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/reports")
 public class ReportsController {
+
+    private final UserRepository userRepository;
+    private final TaskRepository taskRepository;
+
+    @Autowired
+    public ReportsController(UserRepository userRepository, TaskRepository taskRepository) {
+        this.userRepository = userRepository;
+        this.taskRepository = taskRepository;
+    }
 
     /**
      * Reports center page - displays available reports
@@ -21,42 +42,59 @@ public class ReportsController {
     }
 
     /**
-     * Download task summary report
-     * TODO: Implement report generation and download logic
+     * Generate a sample CSV (user activity) and stream it as a file download.
      */
-    @GetMapping("/download/task-summary")
-    public String downloadTaskSummary() {
-        // TODO: Generate and return task summary report as PDF/CSV
-        return "reports";
+    @GetMapping("/download/csv")
+    public void downloadCsv(HttpServletResponse response) throws IOException {
+        String filename = "user-activity.csv";
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+
+        String header = "id,fullName,email,activityCount\n";
+        StringBuilder sb = new StringBuilder();
+        sb.append(header);
+
+        List<User> users = userRepository.findAll();
+        for (User u : users) {
+            int activity = taskRepository.findByPoster(u).size() + taskRepository.findByWorker(u).size();
+            // CSV escape basic values (commas)
+            String name = u.getFullName() != null ? u.getFullName().replace("\"", "\"\"") : "";
+            String email = u.getEmail() != null ? u.getEmail().replace("\"", "\"\"") : "";
+            sb.append(u.getId()).append(",\"").append(name).append("\",\"").append(email).append("\",").append(activity).append("\n");
+        }
+
+        try (OutputStream os = response.getOutputStream()) {
+            os.write(sb.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            os.flush();
+        }
     }
 
     /**
-     * Download user activity report
-     * TODO: Implement report generation and download logic
+     * Generate a simple PDF report (user activity) using OpenPDF and stream to client.
      */
-    @GetMapping("/download/user-activity")
-    public String downloadUserActivity() {
-        // TODO: Generate and return user activity report as PDF/CSV
-        return "reports";
-    }
+    @GetMapping("/download/pdf")
+    public void downloadPdf(HttpServletResponse response) throws IOException {
+        String filename = "user-activity.pdf";
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
 
-    /**
-     * Download financial report
-     * TODO: Implement report generation and download logic
-     */
-    @GetMapping("/download/finance")
-    public String downloadFinance() {
-        // TODO: Generate and return financial report as PDF/CSV
-        return "reports";
-    }
+        Document document = new Document();
+        try {
+            PdfWriter.getInstance(document, response.getOutputStream());
+            document.open();
+            document.add(new Paragraph("User Activity Report"));
+            document.add(new Paragraph("\n"));
 
-    /**
-     * Download platform analytics report
-     * TODO: Implement report generation and download logic
-     */
-    @GetMapping("/download/platform-analytics")
-    public String downloadPlatformAnalytics() {
-        // TODO: Generate and return platform analytics report as PDF/CSV
-        return "reports";
+            List<User> users = userRepository.findAll();
+            for (User u : users) {
+                int activity = taskRepository.findByPoster(u).size() + taskRepository.findByWorker(u).size();
+                document.add(new Paragraph(String.format("%d - %s - %s - activity: %d", u.getId(), u.getFullName(), u.getEmail(), activity)));
+            }
+
+        } catch (DocumentException de) {
+            throw new IOException("Failed to generate PDF", de);
+        } finally {
+            document.close();
+        }
     }
 }
