@@ -47,7 +47,9 @@
   border-radius: 6px;
 }
 
-.cs-links a:hover {
+/* Hover for plain links only — keep button colors intact */
+.cs-links a:not(.btn-primary):not(.btn-ghost):not(.cs-cta):hover {
+  color: #000;
   background: #f5f7fb;
 }
 
@@ -89,6 +91,65 @@
   color: #666;
   font-size: 0.9em;
 }
+
+/* ----------------------
+   Apple-style frosted navbar
+   ---------------------- */
+.cs-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  background: rgba(255,255,255,0.75);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.cs-brand { display:flex; align-items:center; gap:10px; }
+.cs-brand svg { width:28px; height:28px; flex-shrink:0; }
+.brand-text { font-weight:700; color:#111; font-size:15px; }
+
+.cs-links { display:flex; align-items:center; gap:18px; }
+.cs-links a { color:#222; text-decoration:none; font-weight:600; font-size:14px; padding:6px 8px; border-radius:8px; transition: color .18s ease, background .18s ease, transform .08s ease; }
+.cs-links a:not(.btn-primary):not(.btn-ghost):not(.cs-cta):hover { color:#000; background: rgba(0,0,0,0.03); }
+
+/* Ensure primary/cta buttons keep white text on hover */
+.cs-links a.btn-primary,
+.cs-links a.cs-cta { color:#fff; }
+.cs-links a.btn-primary:hover,
+.cs-links a.cs-cta:hover { color:#fff; }
+
+/* Buttons */
+.btn-ghost { background:transparent; border:1px solid rgba(34,34,34,0.12); color:#222; padding:6px 10px; border-radius:8px; }
+.btn-ghost:hover { background: rgba(0,0,0,0.03); }
+
+.btn-primary { background:#111827; color:#fff; padding:7px 12px; border-radius:8px; text-decoration:none; display:inline-block; }
+.btn-primary:hover { background:#0b1220; box-shadow: 0 4px 14px rgba(17,24,39,0.12); }
+
+/* CSS-only toggle using checkbox hack */
+.cs-toggle-checkbox { display:none; }
+.cs-toggle { display:none; cursor:pointer; font-size:20px; background:transparent; border:none; }
+
+@media (max-width: 880px) {
+  .cs-toggle { display:inline-block; }
+  .cs-links { display:none; width:100%; flex-direction:column; padding:12px 0; }
+  .cs-brand { margin-right:auto; }
+  .cs-toggle-checkbox:checked + .cs-toggle + .cs-links { display:flex; }
+  .btn-primary, .btn-ghost { width:100%; text-align:center; }
+}
+
+/* safe content offset so headings aren't hidden under fixed nav */
+body { padding-top: 64px; }
 /* Global Navbar Styling */
 .app-navbar {
   display: flex;
