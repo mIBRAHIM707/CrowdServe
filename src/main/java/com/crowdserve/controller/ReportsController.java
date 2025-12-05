@@ -3,6 +3,7 @@ package com.crowdserve.controller;
 import com.crowdserve.model.User;
 import com.crowdserve.repository.TaskRepository;
 import com.crowdserve.repository.UserRepository;
+import com.crowdserve.service.NotificationService;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Paragraph;
@@ -10,12 +11,15 @@ import com.lowagie.text.pdf.PdfWriter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controller for handling reports and analytics pages.
@@ -26,18 +30,34 @@ public class ReportsController {
 
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
+    private final NotificationService notificationService;
 
     @Autowired
-    public ReportsController(UserRepository userRepository, TaskRepository taskRepository) {
+    public ReportsController(UserRepository userRepository, TaskRepository taskRepository, NotificationService notificationService) {
         this.userRepository = userRepository;
         this.taskRepository = taskRepository;
+        this.notificationService = notificationService;
     }
 
     /**
      * Reports center page - displays available reports
      */
     @GetMapping
-    public String reports() {
+    public String reports(Principal principal, Model model) {
+        // Add navbar attributes
+        model.addAttribute("activePage", "reports");
+        model.addAttribute("pageTitle", "Reports Center");
+        model.addAttribute("pageSubtitle", "Download your platform analytics & task summaries");
+        
+        // Add unread notifications count if user is authenticated
+        if (principal != null) {
+            Optional<User> userOpt = userRepository.findByEmail(principal.getName());
+            if (userOpt.isPresent()) {
+                long unreadCount = notificationService.countUnreadNotificationsForUser(userOpt.get());
+                model.addAttribute("unreadCount", unreadCount);
+            }
+        }
+        
         return "reports";
     }
 

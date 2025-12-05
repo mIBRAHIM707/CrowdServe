@@ -5,28 +5,47 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>CrowdServe — Notifications</title>
   <link rel="stylesheet" th:href="@{/css/dashboard.css}" href="../static/css/dashboard.css">
+  <link rel="stylesheet" th:href="@{/css/navbar.css}" href="../static/css/navbar.css">
   <!-- CSRF tokens for AJAX -->
   <meta name="_csrf" th:content="${_csrf.token}" />
   <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
 <body>
+  <nav class="cs-navbar" role="navigation" aria-label="Main navigation">
+    <div class="cs-brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <circle cx="12" cy="12" r="3" stroke="#0b6fff" fill="#eaf3ff" />
+        <path d="M3 12h18" stroke="#0b6fff" />
+      </svg>
+      <span class="brand-text">CrowdServe</span>
+    </div>
+    <button class="cs-toggle" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+    <div class="cs-links">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="my-tasks.html">My Tasks</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="reports.html">Reports</a>
+      <a href="login.html">Login</a>
+      <a href="register.html" class="cs-cta">Register</a>
+    </div>
+  </nav>
+
+  <h1 class="page-title">Notifications</h1>
+
+  <script>
+    (function(){
+      var btn = document.querySelector('.cs-toggle');
+      var links = document.querySelector('.cs-links');
+      if(!btn || !links) return;
+      btn.addEventListener('click', function(){
+        var open = links.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
   <div class="page">
-    <header class="app-header">
-      <div class="brand">
-        <div class="logo">CS</div>
-        <div>
-          <h1>Notifications</h1>
-          <div class="meta">Recent alerts about your tasks and activity</div>
-        </div>
-      </div>
-
-      <div class="controls">
-        <a class="btn btn-outline" th:href="@{/}">Home</a>
-        <a class="btn btn-outline" th:href="@{/dashboard}">Dashboard</a>
-        <a class="btn btn-primary" th:href="@{/logout}">Logout</a>
-      </div>
-    </header>
-
     <div class="layout">
       <main>
         <div class="panel">

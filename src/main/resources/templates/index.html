@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -43,9 +43,44 @@
             margin: 20px 0;
         }
     </style>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}" href="../static/css/navbar.css">
 </head>
 <body>
-    <div class="container">
+        <nav class="cs-navbar" role="navigation" aria-label="Main navigation">
+            <div class="cs-brand">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <circle cx="12" cy="12" r="3" stroke="#0b6fff" fill="#eaf3ff" />
+                    <path d="M3 12h18" stroke="#0b6fff" />
+                </svg>
+                <span class="brand-text">CrowdServe</span>
+            </div>
+            <button class="cs-toggle" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+            <div class="cs-links">
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="my-tasks.html">My Tasks</a>
+                <a href="notifications.html">Notifications</a>
+                <a href="reports.html">Reports</a>
+                <a href="login.html">Login</a>
+                <a href="register.html" class="cs-cta">Register</a>
+            </div>
+        </nav>
+
+        <h1 class="page-title">Home</h1>
+
+        <script>
+            (function(){
+                var btn = document.querySelector('.cs-toggle');
+                var links = document.querySelector('.cs-links');
+                if(!btn || !links) return;
+                btn.addEventListener('click', function(){
+                    var open = links.classList.toggle('open');
+                    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+                });
+            })();
+        </script>
+
+        <div class="container">
         <h1>Welcome to CrowdServe! 🎉</h1>
         <p>A localized, real-time crowdsourcing platform</p>
         
@@ -63,7 +98,7 @@
             <a href="/register">Register</a>
         </div>
 
-        <div style="margin-top: 30px; color: #666; font-size: 0.9em;">
+        <div class="footer-note">
             <p><strong>Project Status:</strong> Skeleton created successfully! ✅</p>
             <p><strong>Next Steps:</strong> Implement service layer, create user registration/login functionality</p>
         </div>

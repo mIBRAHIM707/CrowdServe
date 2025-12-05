@@ -74,6 +74,15 @@ public class NotificationController {
         // Optional: provide a human friendly timestamp formatter pattern
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MMM d, yyyy HH:mm").withZone(ZoneId.systemDefault());
         model.addAttribute("tsFormatter", fmt);
+        
+        // Add navbar attributes
+        model.addAttribute("activePage", "notifications");
+        model.addAttribute("pageTitle", "Notifications");
+        model.addAttribute("pageSubtitle", "Recent alerts about your tasks and activity");
+        
+        // Add unread count (now 0 since we just marked all as read, but kept for consistency)
+        long unreadCount = notificationRepository.findByUserIdAndReadFalse(userId).size();
+        model.addAttribute("unreadCount", unreadCount);
 
         return "notifications";
     }

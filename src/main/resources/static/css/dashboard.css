@@ -65,17 +65,19 @@ body {
 header.app-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  justify-content: flex-start;
+  gap: 0;
   margin-bottom: 32px;
   padding-bottom: 24px;
   border-bottom: 1px solid var(--muted-3);
+  width: 100%;
 }
 
 .brand {
   display: flex;
   align-items: center;
   gap: 14px;
+  flex-shrink: 0;
 }
 
 /* <CHANGE> Premium logo with refined gradient and shadow */
@@ -116,6 +118,8 @@ h1 {
   display: flex;
   gap: 10px;
   align-items: center;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 /* <CHANGE> Enhanced button system with refined interactions and accessibility */
@@ -517,6 +521,76 @@ a:hover {
   }
 }
 
+/* <CHANGE> Navbar navigation styling */
+.app-nav {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+  margin: 0 24px;
+}
+
+.nav-list {
+  display: flex;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  align-items: center;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: var(--radius-sm);
+  transition: all var(--ease-smooth);
+  position: relative;
+}
+
+.nav-link:hover {
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.nav-link.active {
+  color: var(--primary);
+  background: var(--primary-soft);
+  font-weight: 700;
+}
+
+.nav-link .badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.bg-danger {
+  background-color: var(--danger);
+  color: white;
+}
+
 /* <CHANGE> Enhanced responsive design for tablets and mobile */
 @media (max-width: 980px) {
   .layout {
@@ -525,6 +599,15 @@ a:hover {
   
   .panel {
     padding: 24px;
+  }
+  
+  .app-nav {
+    margin: 0 16px;
+  }
+  
+  .nav-link {
+    padding: 6px 12px;
+    font-size: 13px;
   }
 }
 
