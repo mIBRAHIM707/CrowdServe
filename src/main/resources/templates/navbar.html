@@ -1,0 +1,21 @@
+<nav xmlns:th="http://www.thymeleaf.org" th:fragment="navbar" class="app-navbar">
+  <!-- Logo/Icon -->
+  <div class="navbar-brand">
+    <svg class="navbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="1"></circle>
+      <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m2.12 2.12l4.24 4.24M1 12h6m6 0h6m-17.78 7.78l4.24-4.24m2.12-2.12l4.24-4.24"></path>
+    </svg>
+    <span class="navbar-brand-text">CrowdServe</span>
+  </div>
+
+  <!-- Navigation Links -->
+  <div class="navbar-links">
+    <a th:href="@{/}" class="nav-link">Home</a>
+    <a th:href="@{/dashboard}" class="nav-link">Dashboard</a>
+    <a th:href="@{/my-tasks}" class="nav-link">My Tasks</a>
+    <a th:href="@{/notifications}" class="nav-link">Notifications</a>
+    <a th:href="@{/reports}" class="nav-link">Reports</a>
+    <a th:href="@{/login}" class="nav-link">Login</a>
+    <a th:href="@{/register}" class="nav-link">Register</a>
+  </div>
+</nav>

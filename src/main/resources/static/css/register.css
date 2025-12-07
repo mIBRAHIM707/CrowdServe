@@ -1,3 +1,80 @@
+/* Register page — Apple-inspired minimalist card */
+/* Register page — Apple-inspired minimalist card */
+.registration-wrapper {
+    max-width: 340px;
+    margin: 24px auto 48px;
+    padding: 0 12px;
+    box-sizing: border-box;
+}
+
+
+.registration-wrapper .page-title {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    font-size: 30px;
+    font-weight: 600;
+    color: #0b1220;
+    margin: 6px 0 16px;
+    text-align: center;
+    letter-spacing: -0.2px;
+}
+
 .registration-card {
-    max-width: 450px;
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid rgba(11,18,32,0.04);
+    box-shadow: 0 6px 18px rgba(11,18,32,0.05);
+    padding: 12px 14px;
+    max-width: 280px;
+    margin: 0 auto;
+}
+
+.registration-card .card-body {
+    padding: 0;
+}
+
+.registration-card .form-label {
+    font-weight: 600;
+    color: #0b1220;
+    font-size: 0.88rem;
+    margin-bottom: 6px;
+}
+
+.registration-card .form-control {
+    border: 1px solid rgba(11,18,32,0.06);
+    border-radius: 8px;
+    padding: 8px 10px;
+    height: 38px;
+    box-shadow: none;
+    transition: box-shadow .12s ease, border-color .12s ease, transform .08s ease;
+}
+
+.registration-card .form-control:focus {
+    outline: none;
+    border-color: rgba(10,132,255,0.9);
+    box-shadow: 0 0 0 6px rgba(10,132,255,0.06);
+    transform: translateY(-1px);
+}
+
+.registration-card .btn-primary {
+    background: linear-gradient(180deg,#0a1a33 0%, #091423 100%);
+    border: none;
+    color: #fff;
+    width: 100%;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-weight: 600;
+    height: 40px;
+}
+
+.registration-card .btn-primary:hover {
+    background: linear-gradient(180deg,#071527 0%, #06111e 100%);
+    box-shadow: 0 10px 30px rgba(9,20,35,0.08);
+    transform: translateY(-1px);
+}
+
+/* Slight spacing tightening on small screens */
+@media (max-width: 576px) {
+    .registration-wrapper { margin-top: 12px; max-width: 92%; }
+    .registration-card { padding: 12px; max-width: 100%; }
+    .registration-wrapper .page-title { font-size: 24px; margin-bottom: 12px; }
 }

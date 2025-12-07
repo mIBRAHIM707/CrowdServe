@@ -1,0 +1,222 @@
+/* Upwork-inspired Top Navigation (modern, white, subtle border) */
+.cs-navbar {
+  position: fixed; /* or sticky */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: #f3ecec;
+  border-bottom: 1px solid #e6e6e6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 12px 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.cs-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cs-brand svg {
+  width: 28px;
+  height: 28px;
+  color: #0b6fff;
+}
+
+.cs-brand .brand-text {
+  font-weight: 700;
+  color: #222;
+  font-size: 16px;
+}
+
+.cs-links {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.cs-links a {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 10px;
+  border-radius: 6px;
+}
+
+/* Hover for plain links only — keep button colors intact */
+.cs-links a:not(.btn-primary):not(.btn-ghost):not(.cs-cta):hover {
+  color: #000;
+  background: #f5f7fb;
+}
+
+.cs-cta {
+  background: #0b6fff;
+  color: white !important;
+}
+
+.cs-toggle {
+  display: none;
+  background: transparent;
+  border: 0;
+  font-size: 20px;
+}
+
+/* Responsive: collapse links into vertical stack on small screens */
+@media (max-width: 768px) {
+  .cs-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+    padding: 10px 0;
+  }
+  .cs-links.open {
+    display: flex;
+  }
+  .cs-toggle {
+    display: inline-block;
+  }
+  .cs-navbar {
+    flex-wrap: wrap;
+  }
+}
+
+/* Footer note fallback */
+.footer-note {
+  margin-top: 30px;
+  color: #666;
+  font-size: 0.9em;
+}
+
+/* ----------------------
+   Apple-style frosted navbar
+   ---------------------- */
+.cs-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  background: rgba(255,255,255,0.75);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.cs-brand { display:flex; align-items:center; gap:10px; }
+.cs-brand svg { width:28px; height:28px; flex-shrink:0; }
+.brand-text { font-weight:700; color:#111; font-size:15px; }
+
+.cs-links { display:flex; align-items:center; gap:18px; }
+.cs-links a { color:#222; text-decoration:none; font-weight:600; font-size:14px; padding:6px 8px; border-radius:8px; transition: color .18s ease, background .18s ease, transform .08s ease; }
+.cs-links a:not(.btn-primary):not(.btn-ghost):not(.cs-cta):hover { color:#000; background: rgba(0,0,0,0.03); }
+
+/* Ensure primary/cta buttons keep white text on hover */
+.cs-links a.btn-primary,
+.cs-links a.cs-cta { color:#fff; }
+.cs-links a.btn-primary:hover,
+.cs-links a.cs-cta:hover { color:#fff; }
+
+/* Buttons */
+.btn-ghost { background:transparent; border:1px solid rgba(34,34,34,0.12); color:#222; padding:6px 10px; border-radius:8px; }
+.btn-ghost:hover { background: rgba(0,0,0,0.03); }
+
+.btn-primary { background:#111827; color:#fff; padding:7px 12px; border-radius:8px; text-decoration:none; display:inline-block; }
+.btn-primary:hover { background:#0b1220; box-shadow: 0 4px 14px rgba(17,24,39,0.12); }
+
+/* CSS-only toggle using checkbox hack */
+.cs-toggle-checkbox { display:none; }
+.cs-toggle { display:none; cursor:pointer; font-size:20px; background:transparent; border:none; }
+
+@media (max-width: 880px) {
+  .cs-toggle { display:inline-block; }
+  .cs-links { display:none; width:100%; flex-direction:column; padding:12px 0; }
+  .cs-brand { margin-right:auto; }
+  .cs-toggle-checkbox:checked + .cs-toggle + .cs-links { display:flex; }
+  .btn-primary, .btn-ghost { width:100%; text-align:center; }
+}
+
+/* safe content offset so headings aren't hidden under fixed nav */
+body { padding-top: 64px; }
+/* Global Navbar Styling */
+.app-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 30px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 12px 30px;
+  z-index: 999;
+  background: linear-gradient(to right, #005CFF, #0b6fff);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 150px;
+}
+
+.navbar-icon {
+  width: 28px;
+  height: 28px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.navbar-brand-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  text-decoration: none;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+  align-items: center;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Spacer for fixed navbar */
+body {
+  padding-top: 70px;
+}
+
+/* Footer Note Styling */
+.footer-note {
+  margin-top: 30px;
+  color: #666;
+  font-size: 0.9em;
+}
+

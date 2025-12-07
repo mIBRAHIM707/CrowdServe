@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CrowdServe — Reports Center</title>
+
+  <!-- Absolute path to ensure static resource resolution -->
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}" href="../static/css/dashboard.css">
+  <link rel="stylesheet" th:href="@{/css/navbar.css}" href="../static/css/navbar.css">
+</head>
+<body>
+  <nav class="cs-navbar" role="navigation" aria-label="Main navigation">
+    <div class="cs-brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <circle cx="12" cy="12" r="3" stroke="#0b6fff" fill="#eaf3ff" />
+        <path d="M3 12h18" stroke="#0b6fff" />
+      </svg>
+      <span class="brand-text">CrowdServe</span>
+    </div>
+    <button class="cs-toggle" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+    <div class="cs-links">
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="my-tasks.html">My Tasks</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="reports.html">Reports</a>
+      <a href="login.html">Login</a>
+      <a href="register.html" class="cs-cta">Register</a>
+    </div>
+  </nav>
+
+  <h1 class="page-title">Reports</h1>
+
+  <script>
+    (function(){
+      var btn = document.querySelector('.cs-toggle');
+      var links = document.querySelector('.cs-links');
+      if(!btn || !links) return;
+      btn.addEventListener('click', function(){
+        var open = links.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <div class="page">
+    <div class="layout">
+      <main>
+        <div class="panel">
+          <h2>Available Reports</h2>
+
+          <div class="report-list">
+            <!-- Task Summary Report -->
+            <div class="report-card">
+              <div class="report-header">
+                <div class="report-title">Task Summary Report</div>
+                <div class="report-desc">Includes all tasks, statuses, assigned workers, timestamps, and budgets.</div>
+              </div>
+              <div class="report-footer">
+                <a th:href="@{/reports/download/task-summary}" class="btn btn-primary btn-sm">Download Report</a>
+              </div>
+            </div>
+
+            <!-- User Activity Report -->
+            <div class="report-card">
+              <div class="report-header">
+                <div class="report-title">User Activity Report</div>
+                <div class="report-desc">Shows logins, participation, assigned tasks, and completion patterns across your team.</div>
+              </div>
+              <div class="report-footer">
+                <a th:href="@{/reports/download/user-activity}" class="btn btn-primary btn-sm">Download Report</a>
+              </div>
+            </div>
+
+            <!-- Financial Report -->
+            <div class="report-card">
+              <div class="report-header">
+                <div class="report-title">Financial Report</div>
+                <div class="report-desc">Summaries of budgets, payments, cost distributions, and financial insights.</div>
+              </div>
+              <div class="report-footer">
+                <a th:href="@{/reports/download/finance}" class="btn btn-primary btn-sm">Download Report</a>
+              </div>
+            </div>
+
+            <!-- Platform Analytics Report -->
+            <div class="report-card">
+              <div class="report-header">
+                <div class="report-title">Platform Analytics Report</div>
+                <div class="report-desc">High-level analytics on usage trends, task volume, and platform growth metrics.</div>
+              </div>
+              <div class="report-footer">
+                <a th:href="@{/reports/download/platform-analytics}" class="btn btn-primary btn-sm">Download Report</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+
+      <aside class="sidebar">
+        <div class="card">
+          <div class="card-heading">About Reports</div>
+          <div class="small">Access comprehensive platform reports including task summaries, user activity, financial data, and analytics insights. All reports are generated fresh from your platform data.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-heading">Download Formats</div>
+          <div class="small">Reports are available as PDF and CSV formats depending on the report type. Choose the format that works best for your analysis.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-heading">Support</div>
+          <div class="small">Questions about your reports? <a href="#" class="link-primary">Contact our support team</a> for assistance.</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>
