@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CrowdServe — My Profile</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-label { font-weight: 600; color: #374151; margin-bottom: 8px; display: block; }
+        .form-control {
+            width: 100%;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .form-control:focus { border-color: #0b6fff; outline: none; }
+        textarea.form-control { min-height: 100px; resize: vertical; }
+        .btn-update {
+            background: #0b6fff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-update:hover { background: #0052cc; }
+        .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; }
+        .alert-success { background: #d1fae5; color: #065f46; }
+        .alert-error { background: #fee2e2; color: #991b1b; }
+        .profile-header { text-align: center; margin-bottom: 24px; }
+        .profile-header h2 { color: #0b3a8a; margin: 0; }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header class="app-header">
+            <div class="brand">
+                <div class="logo">CS</div>
+                <div>
+                    <h1>My Profile</h1>
+                    <div class="meta">Manage your account settings</div>
+                </div>
+            </div>
+            <div class="controls">
+                <a class="btn btn-outline" th:href="@{/tasks}">Dashboard</a>
+                <a class="btn btn-outline" th:href="@{/tasks/create}">Create Task</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-primary">Logout</button>
+                </form>
+            </div>
+        </header>
+
+        <div class="profile-card">
+            <div class="profile-header">
+                <h2>Edit Profile</h2>
+            </div>
+
+            <div th:if="${param.success}" class="alert alert-success">
+                Profile updated successfully!
+            </div>
+            <div th:if="${param.error}" class="alert alert-error">
+                Error updating profile. Please try again.
+            </div>
+
+            <div th:if="${user != null}">
+                <form th:action="@{/profile/update}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <input type="hidden" name="id" th:value="${user.id}" />
+
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" th:value="${user.username}" disabled />
+                        <small style="color: #6b7280;">Username cannot be changed</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" th:value="${user.email}" disabled />
+                        <small style="color: #6b7280;">Email cannot be changed</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="fullName">Full Name</label>
+                        <input type="text" id="fullName" name="fullName" class="form-control" 
+                               th:value="${user.fullName}" placeholder="Enter your full name" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="bio">Bio</label>
+                        <textarea id="bio" name="bio" class="form-control" 
+                                  placeholder="Tell us about yourself..." th:text="${user.bio}"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-update">Update Profile</button>
+                </form>
+            </div>
+
+            <div th:if="${user == null}" style="text-align: center; padding: 20px;">
+                <p style="color: #6b7280;">User information is not available.</p>
+                <a th:href="@{/login}" class="btn btn-primary">Please Login</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

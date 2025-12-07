@@ -24,12 +24,4 @@ public class HomeController {
     public String login() {
         return "login";
     }
-
-    /**
-     * Registration page
-     */
-    // @GetMapping("/register")
-    // public String register() {
-    //     return "register";
-    // }
 }

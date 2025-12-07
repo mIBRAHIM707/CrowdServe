@@ -35,4 +35,12 @@ public interface UserService {
      * @throws RuntimeException if user is not found
      */
     User getUserById(Long id);
+
+    /**
+     * Updates the user's profile information.
+     *
+     * @param user the user entity with updated information
+     * @return the updated User entity
+     */
+    User updateProfile(User user);
 }

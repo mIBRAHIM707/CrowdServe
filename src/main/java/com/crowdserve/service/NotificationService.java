@@ -1,44 +1,55 @@
 package com.crowdserve.service;
 
+import com.crowdserve.model.Notification;
+import com.crowdserve.model.Task;
 import com.crowdserve.model.User;
-import com.crowdserve.repository.NotificationRepository;
-import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
- * Service for notification-related operations.
+ * Service interface for notification operations.
  */
-@Service
-public class NotificationService {
-
-    private final NotificationRepository notificationRepository;
-
-    public NotificationService(NotificationRepository notificationRepository) {
-        this.notificationRepository = notificationRepository;
-    }
+public interface NotificationService {
 
     /**
-     * Count unread notifications for a specific user.
+     * Creates a notification for a user.
      *
-     * @param user the user to count unread notifications for
-     * @return the count of unread notifications
+     * @param user the user to notify
+     * @param title notification title
+     * @param message notification message
+     * @param relatedTask optional related task
+     * @return the created notification
      */
-    public long countUnreadNotificationsForUser(User user) {
-        if (user == null) {
-            return 0;
-        }
-        return notificationRepository.findByUserIdAndReadFalse(user.getId()).size();
-    }
+    Notification createNotification(User user, String title, String message, Task relatedTask);
 
     /**
-     * Count unread notifications for a user by ID.
+     * Gets all notifications for a user.
      *
-     * @param userId the user ID
-     * @return the count of unread notifications
+     * @param user the user
+     * @return list of notifications
      */
-    public long countUnreadNotificationsForUserId(Long userId) {
-        if (userId == null) {
-            return 0;
-        }
-        return notificationRepository.findByUserIdAndReadFalse(userId).size();
-    }
+    List<Notification> getNotificationsForUser(User user);
+
+    /**
+     * Gets unread notifications for a user.
+     *
+     * @param user the user
+     * @return list of unread notifications
+     */
+    List<Notification> getUnreadNotifications(User user);
+
+    /**
+     * Marks a notification as read.
+     *
+     * @param notificationId the notification ID
+     */
+    void markAsRead(Long notificationId);
+
+    /**
+     * Gets count of unread notifications.
+     *
+     * @param user the user
+     * @return count of unread notifications
+     */
+    long getUnreadCount(User user);
 }

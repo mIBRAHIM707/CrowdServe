@@ -26,6 +26,12 @@ public class Task {
     @Column(length = 2000)
     private String description;
 
+    @Column(nullable = false)
+    private String location;
+
+    @Column(nullable = false)
+    private Double reward;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TaskStatus status;

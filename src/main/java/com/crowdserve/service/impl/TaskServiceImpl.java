@@ -51,6 +51,8 @@ public class TaskServiceImpl implements TaskService {
         Task newTask = new Task();
         newTask.setTitle(taskDto.title());
         newTask.setDescription(taskDto.description());
+        newTask.setLocation(taskDto.location());
+        newTask.setReward(taskDto.reward());
         newTask.setStatus(TaskStatus.OPEN);
         newTask.setPoster(poster);
         newTask.setWorker(null); // No worker assigned initially
@@ -131,5 +133,66 @@ public class TaskServiceImpl implements TaskService {
         
         // Delete the task
         taskRepository.delete(task);
+    }
+
+    /**
+     * Assigns a worker to a task and changes status to ASSIGNED.
+     * Only tasks with OPEN status can be assigned.
+     *
+     * @param taskId the ID of the task to assign
+     * @param worker the user to assign as worker
+     * @return the updated Task entity
+     * @throws RuntimeException if task not found
+     * @throws IllegalStateException if task is not in OPEN status
+     */
+    @Override
+    public Task assignWorker(Long taskId, User worker) {
+        Task task = taskRepository.findById(taskId)
+            .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+        
+        // Validate task is in OPEN status
+        if (task.getStatus() != TaskStatus.OPEN) {
+            throw new IllegalStateException(
+                "Cannot assign worker to task. Task status must be OPEN, but was: " + task.getStatus()
+            );
+        }
+        
+        // Prevent poster from accepting their own task
+        if (task.getPoster().getId().equals(worker.getId())) {
+            throw new IllegalStateException("You cannot accept your own task");
+        }
+        
+        // Assign worker and update status
+        task.setWorker(worker);
+        task.setStatus(TaskStatus.ASSIGNED);
+        
+        return taskRepository.save(task);
+    }
+
+    /**
+     * Marks a task as completed.
+     * Only tasks with ASSIGNED status can be completed.
+     *
+     * @param taskId the ID of the task to complete
+     * @return the updated Task entity
+     * @throws RuntimeException if task not found
+     * @throws IllegalStateException if task is not in ASSIGNED status
+     */
+    @Override
+    public Task markCompleted(Long taskId) {
+        Task task = taskRepository.findById(taskId)
+            .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+        
+        // Validate task is in ASSIGNED status
+        if (task.getStatus() != TaskStatus.ASSIGNED) {
+            throw new IllegalStateException(
+                "Cannot complete task. Task status must be ASSIGNED, but was: " + task.getStatus()
+            );
+        }
+        
+        // Update status to COMPLETED
+        task.setStatus(TaskStatus.COMPLETED);
+        
+        return taskRepository.save(task);
     }
 }

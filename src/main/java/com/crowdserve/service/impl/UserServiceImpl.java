@@ -15,9 +15,17 @@ import java.util.Optional;
  * Implementation of UserService interface.
  * Handles user registration, authentication, and user management operations.
  */
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+/**
+ * Implementation of UserService interface.
+ * Handles user registration, authentication, and user management operations.
+ */
 @Service
 @Transactional
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -54,6 +62,7 @@ public class UserServiceImpl implements UserService {
 
         // Create new user entity
         User newUser = new User();
+        newUser.setUsername(registrationDto.username());
         newUser.setFullName(registrationDto.fullName());
         newUser.setEmail(registrationDto.email());
         
@@ -90,4 +99,38 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     }
+    @Override
+    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+        // Try finding by username first
+        User user = userRepository.findByUsername(usernameOrEmail);
+        
+        // If not found, try finding by email
+        if (user == null) {
+            user = userRepository.findByEmail(usernameOrEmail).orElse(null);
+        }
+
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with username or email: " + usernameOrEmail);
+        }
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .roles("USER")
+                .build();
+    }
+
+    
+    @Override
+    public User updateProfile(User user) {
+    // Step 1: Fetch existing user
+    User existingUser = userRepository.findById(user.getId())
+            .orElseThrow(() -> new RuntimeException("User not found with id: " + user.getId()));
+
+    // Step 2: Update allowed fields only
+    existingUser.setFullName(user.getFullName());
+    existingUser.setBio(user.getBio());
+    // Step 3: Save updated user
+    return userRepository.save(existingUser);
+}
+
 }

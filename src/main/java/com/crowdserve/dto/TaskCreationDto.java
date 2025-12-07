@@ -6,6 +6,8 @@ package com.crowdserve.dto;
  */
 public record TaskCreationDto(
     String title,
-    String description
+    String description,
+    String location,
+    Double reward
 ) {
 }

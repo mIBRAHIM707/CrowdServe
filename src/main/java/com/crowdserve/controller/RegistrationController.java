@@ -18,7 +18,7 @@ public class RegistrationController {
     // Show registration page
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
-        model.addAttribute("user", new UserRegistrationDto());
+        model.addAttribute("user", new UserRegistrationDto(null, null, null, null));
         return "register";
     }
 

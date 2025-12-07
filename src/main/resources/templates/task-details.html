@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title th:text="'CrowdServe — ' + ${task.title}">Task Details</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <style>
+        .task-detail-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .task-title-large {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0b3a8a;
+            margin: 0;
+        }
+        .task-description {
+            color: #4b5563;
+            line-height: 1.6;
+            margin: 16px 0;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+        .task-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .info-item {
+            padding: 12px;
+            background: #f3f4f6;
+            border-radius: 8px;
+        }
+        .info-label {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .info-value {
+            font-size: 16px;
+            color: #111827;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        .btn-accept {
+            background: #10b981;
+            color: white;
+        }
+        .btn-accept:hover {
+            background: #059669;
+        }
+        .btn-complete {
+            background: #0b6fff;
+            color: white;
+        }
+        .btn-complete:hover {
+            background: #0052cc;
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #6b7280;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .back-link:hover {
+            color: #0b6fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header class="app-header">
+            <div class="brand">
+                <div class="logo">CS</div>
+                <div>
+                    <h1>Task Details</h1>
+                    <div class="meta">View and manage task</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <a class="btn btn-outline" th:href="@{/tasks}">Dashboard</a>
+                <a class="btn btn-outline" th:href="@{/profile}">Profile</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-primary">Logout</button>
+                </form>
+            </div>
+        </header>
+
+        <a th:href="@{/tasks}" class="back-link">← Back to Dashboard</a>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <div class="task-detail-card">
+            <div class="task-header">
+                <h2 class="task-title-large" th:text="${task.title}">Task Title</h2>
+                <div th:switch="${task.status}">
+                    <span th:case="'OPEN'" class="status status-open">OPEN</span>
+                    <span th:case="'ASSIGNED'" class="status status-assigned">ASSIGNED</span>
+                    <span th:case="'COMPLETED'" class="status status-completed">COMPLETED</span>
+                    <span th:case="*" class="status" th:text="${task.status}">UNKNOWN</span>
+                </div>
+            </div>
+
+            <div class="task-description" th:text="${task.description}">
+                Task description goes here...
+            </div>
+
+            <div class="task-info-grid">
+                <div class="info-item">
+                    <div class="info-label">Posted By</div>
+                    <div class="info-value" th:text="${task.poster != null ? task.poster.fullName : 'Unknown'}">John Doe</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Location</div>
+                    <div class="info-value" th:text="${task.location != null ? task.location : 'Not specified'}">City, Country</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Reward</div>
+                    <div class="info-value" th:text="'$' + ${task.reward}">$50.00</div>
+                </div>
+                <div class="info-item" th:if="${task.worker != null}">
+                    <div class="info-label">Assigned Worker</div>
+                    <div class="info-value" th:text="${task.worker.fullName}">Worker Name</div>
+                </div>
+            </div>
+
+            <!-- Action Buttons based on task status and current user -->
+            <div class="action-buttons" th:if="${currentUser != null}">
+                
+                <!-- OPEN status: Show Accept button (if not the poster) -->
+                <form th:if="${task.status.name() == 'OPEN' and (currentUser.id != task.poster.id)}" 
+                      th:action="@{|/tasks/${task.id}/accept|}" method="post" style="margin:0">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="btn btn-accept">Accept Task</button>
+                </form>
+
+                <!-- ASSIGNED status: Show Complete button (if worker or poster) -->
+                <form th:if="${task.status.name() == 'ASSIGNED' and (currentUser.id == task.worker.id or currentUser.id == task.poster.id)}" 
+                      th:action="@{|/tasks/${task.id}/complete|}" method="post" style="margin:0">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="btn btn-complete">Mark as Completed</button>
+                </form>
+
+                <!-- Info messages -->
+                <p th:if="${task.status.name() == 'OPEN' and currentUser.id == task.poster.id}" class="small">
+                    This is your task. Waiting for someone to accept it.
+                </p>
+                <p th:if="${task.status.name() == 'ASSIGNED' and currentUser.id != task.worker.id and currentUser.id != task.poster.id}" class="small">
+                    This task is assigned to another worker.
+                </p>
+                <p th:if="${task.status.name() == 'COMPLETED'}" class="small" style="color: #10b981;">
+                    ✓ This task has been completed.
+                </p>
+            </div>
+
+            <!-- Login prompt if not authenticated -->
+            <div th:if="${currentUser == null}" class="action-buttons">
+                <a th:href="@{/login}" class="btn btn-primary">Login to Accept Task</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

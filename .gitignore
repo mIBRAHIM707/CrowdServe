@@ -3,6 +3,7 @@
 *.jar
 *.war
 *.ear
+*.db
 
 ### Maven ###
 target/
@@ -48,6 +49,12 @@ ehthumbs.db
 
 ### Logs ###
 *.log
+
+### H2 Database Files ###
+data/*.db
+data/*.trace.db
+*.mv.db
+*.trace.db
 
 ### Application ###
 application-local.properties
