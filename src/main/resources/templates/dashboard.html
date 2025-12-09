@@ -60,9 +60,9 @@
                 <div class="task-title" th:text="${task.title}">Task title</div>
                 <div class="task-desc" th:text="${task.description}">Short description of the task...</div>
                 <div class="task-meta">
-                  <span th:text="'Posted by: ' + (task.posterName != null ? task.posterName : task.posterId)">Posted by: —</span>
-                  <span th:text="'Budget: ' + (task.budget != null ? task.budget : 'N/A')">Budget: N/A</span>
-                  <span th:text="'Posted: ' + (task.createdAt != null ? task.createdAt : '')">Posted: —</span>
+                  <span th:text="'Posted by: ' + (task.poster != null ? task.poster.fullName : 'Unknown')">Posted by: —</span>
+                  <span th:text="'Reward: ' + (task.reward != null ? task.reward : 'N/A')">Reward: N/A</span>
+                  <span>Posted: N/A</span>
                   <span th:text="'Location: ' + (task.location != null ? task.location : 'N/A')">Location: —</span>
                 </div>
               </div>

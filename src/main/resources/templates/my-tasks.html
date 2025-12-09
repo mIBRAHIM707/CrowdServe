@@ -206,7 +206,7 @@
                 </div>
                 <div class="task-info-item">
                   <span class="task-info-label">Created Date</span>
-                  <span class="task-info-value" th:text="${task.createdAt != null ? #temporals.format(task.createdAt, 'MMM d, yyyy') : 'N/A'}">Jan 1, 2025</span>
+                  <span class="task-info-value">N/A</span>
                 </div>
               </div>
 
@@ -267,7 +267,7 @@
                 </div>
                 <div class="task-info-item">
                   <span class="task-info-label">Deadline</span>
-                  <span class="task-info-value" th:text="${task.deadline != null ? #temporals.format(task.deadline, 'MMM d, yyyy') : 'No deadline'}">No deadline</span>
+                  <span class="task-info-value">No deadline</span>
                 </div>
               </div>
 
