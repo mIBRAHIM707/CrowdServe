@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="notification-right">
-                  <div class="notification-ts" th:text="${#temporals.format(notification.timestamp, 'MMM d, yyyy HH:mm')}">Apr 1, 2025 12:00</div>
+                  <div class="notification-ts" th:text="${#temporals.format(notification.createdAt, 'MMM d, yyyy HH:mm')}">Apr 1, 2025 12:00</div>
 
                   <button type="button" class="btn btn-outline btn-sm mark-read-btn" th:attr="data-id=${notification.id}">Mark as Read</button>
 
