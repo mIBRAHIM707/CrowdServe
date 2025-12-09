@@ -90,13 +90,18 @@ public class MyTasksController {
         }
 
         Task task = taskOpt.get();
-        Optional<User> userOpt = userRepository.findByEmail(principal.getName());
-        if (userOpt.isEmpty()) {
+        // Resolve user by username or email
+        String principalName = principal.getName();
+        User user = userRepository.findByUsername(principalName);
+        if (user == null) {
+            user = userRepository.findByEmail(principalName).orElse(null);
+        }
+        if (user == null) {
             return "redirect:/login";
         }
 
         // Verify the logged-in user is the poster of this task
-        if (!task.getPoster().getId().equals(userOpt.get().getId())) {
+        if (!task.getPoster().getId().equals(user.getId())) {
             return "redirect:/my-tasks";
         }
 
@@ -125,13 +130,18 @@ public class MyTasksController {
         }
 
         Task task = taskOpt.get();
-        Optional<User> userOpt = userRepository.findByEmail(principal.getName());
-        if (userOpt.isEmpty()) {
+        // Resolve user by username or email
+        String principalName = principal.getName();
+        User user = userRepository.findByUsername(principalName);
+        if (user == null) {
+            user = userRepository.findByEmail(principalName).orElse(null);
+        }
+        if (user == null) {
             return "redirect:/login";
         }
 
         // Verify the logged-in user is the poster of this task
-        if (!task.getPoster().getId().equals(userOpt.get().getId())) {
+        if (!task.getPoster().getId().equals(user.getId())) {
             return "redirect:/my-tasks";
         }
 
@@ -160,13 +170,18 @@ public class MyTasksController {
         }
 
         Task task = taskOpt.get();
-        Optional<User> userOpt = userRepository.findByEmail(principal.getName());
-        if (userOpt.isEmpty()) {
+        // Resolve user by username or email
+        String principalName = principal.getName();
+        User user = userRepository.findByUsername(principalName);
+        if (user == null) {
+            user = userRepository.findByEmail(principalName).orElse(null);
+        }
+        if (user == null) {
             return "redirect:/login";
         }
 
         // Verify the logged-in user is the assigned worker for this task
-        if (task.getWorker() == null || !task.getWorker().getId().equals(userOpt.get().getId())) {
+        if (task.getWorker() == null || !task.getWorker().getId().equals(user.getId())) {
             return "redirect:/my-tasks";
         }
 

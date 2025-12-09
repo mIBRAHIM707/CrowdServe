@@ -48,7 +48,10 @@
     <div class="layout">
       <main>
         <div class="panel">
-          <h2>Open Tasks</h2>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0;">Open Tasks</h2>
+            <a th:href="@{/tasks/create}" class="btn btn-primary">+ Create New Task</a>
+          </div>
 
           <div th:if="${#lists.isEmpty(tasks)}" class="empty">
             No open tasks right now. <a th:href="@{/tasks/create}">Create the first task</a>.

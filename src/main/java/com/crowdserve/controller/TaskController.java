@@ -32,7 +32,12 @@ public class TaskController {
 
     @GetMapping("/create")
     public String showCreateTaskForm(Model model) {
-        model.addAttribute("taskDto", new TaskCreationDto(null, null, null, null));
+        // Always create a fresh DTO to ensure form is empty
+        TaskCreationDto freshDto = new TaskCreationDto(null, null, null, null);
+        model.addAttribute("taskDto", freshDto);
+        // Clear any previous error/success messages
+        model.addAttribute("successMessage", null);
+        model.addAttribute("errorMessage", null);
         return "create-task";
     }
 
