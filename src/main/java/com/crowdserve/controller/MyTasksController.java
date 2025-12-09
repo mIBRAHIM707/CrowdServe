@@ -66,7 +66,7 @@ public class MyTasksController {
         model.addAttribute("pageSubtitle", "Track tasks you've posted and work you're assigned to");
         
         // Add unread notifications count
-        long unreadCount = notificationService.countUnreadNotificationsForUser(user);
+        long unreadCount = notificationService.getUnreadCount(user);
         model.addAttribute("unreadCount", unreadCount);
 
         return "my-tasks";

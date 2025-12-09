@@ -54,19 +54,17 @@ public class NotificationController {
         }
 
         User user = userOpt.get();
-        Long userId = user.getId();
-
-        // Retrieve notifications ordered by timestamp (newest first)
-        List<Notification> notifications = notificationRepository.findByUserIdOrderByTimestampDesc(userId);
+        // Retrieve notifications ordered by creation date (newest first)
+        List<Notification> notifications = notificationRepository.findByUserOrderByCreatedAtDesc(user);
 
         // Mark unread notifications as read and persist them
-        List<Notification> unread = notificationRepository.findByUserIdAndReadFalse(userId);
+        List<Notification> unread = notificationRepository.findByUserAndIsReadFalseOrderByCreatedAtDesc(user);
         if (!unread.isEmpty()) {
             unread.forEach(n -> n.setRead(true));
             notificationRepository.saveAll(unread);
 
             // Refresh notifications list after marking as read
-            notifications = notificationRepository.findByUserIdOrderByTimestampDesc(userId);
+            notifications = notificationRepository.findByUserOrderByCreatedAtDesc(user);
         }
 
         model.addAttribute("notifications", notifications);
@@ -81,7 +79,7 @@ public class NotificationController {
         model.addAttribute("pageSubtitle", "Recent alerts about your tasks and activity");
         
         // Add unread count (now 0 since we just marked all as read, but kept for consistency)
-        long unreadCount = notificationRepository.findByUserIdAndReadFalse(userId).size();
+        long unreadCount = notificationRepository.findByUserAndIsReadFalseOrderByCreatedAtDesc(user).size();
         model.addAttribute("unreadCount", unreadCount);
 
         return "notifications";
@@ -102,7 +100,7 @@ public class NotificationController {
             Notification n = nOpt.get();
             // Make sure the logged-in user owns this notification
             Optional<User> userOpt = userRepository.findByEmail(principal.getName());
-            if (userOpt.isPresent() && n.getUserId().equals(userOpt.get().getId())) {
+            if (userOpt.isPresent() && n.getUser().getId().equals(userOpt.get().getId())) {
                 if (!n.isRead()) {
                     n.setRead(true);
                     notificationRepository.save(n);
@@ -129,7 +127,7 @@ public class NotificationController {
 
         Notification n = nOpt.get();
         Optional<User> userOpt = userRepository.findByEmail(principal.getName());
-        if (userOpt.isEmpty() || !n.getUserId().equals(userOpt.get().getId())) {
+        if (userOpt.isEmpty() || !n.getUser().getId().equals(userOpt.get().getId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("forbidden");
         }
 
@@ -156,8 +154,8 @@ public class NotificationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("unauthenticated");
         }
 
-        Long userId = userOpt.get().getId();
-        java.util.List<Notification> unread = notificationRepository.findByUserIdAndReadFalse(userId);
+        User user = userOpt.get();
+        java.util.List<Notification> unread = notificationRepository.findByUserAndIsReadFalseOrderByCreatedAtDesc(user);
         if (unread.isEmpty()) {
             return ResponseEntity.ok(java.util.Map.of("success", true, "marked", 0));
         }
