@@ -141,13 +141,13 @@
     </div>
     <button class="cs-toggle" aria-expanded="false" aria-label="Toggle navigation">☰</button>
     <div class="cs-links">
-      <a href="index.html">Home</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="my-tasks.html">My Tasks</a>
-      <a href="notifications.html">Notifications</a>
-      <a href="reports.html">Reports</a>
-      <a href="login.html">Login</a>
-      <a href="register.html" class="cs-cta">Register</a>
+        <a th:href="@{/}" href="/">Home</a>
+        <a th:href="@{/dashboard}" href="/dashboard">Dashboard</a>
+        <a th:href="@{/my-tasks}" href="/my-tasks">My Tasks</a>
+        <a th:href="@{/notifications}" href="/notifications">Notifications</a>
+        <a th:href="@{/reports}" href="/reports">Reports</a>
+        <a th:href="@{/login}" href="/login">Login</a>
+        <a th:href="@{/register}" href="/register" class="cs-cta">Register</a>
     </div>
   </nav>
 
@@ -177,7 +177,7 @@
             <div class="empty-icon">📋</div>
             <div class="empty-title">No tasks posted yet</div>
             <div class="empty-text">Start by creating a task and assigning workers to help you get things done.</div>
-            <a class="btn btn-primary" th:href="@{/create-task}">Create Your First Task</a>
+            <a class="btn btn-primary" th:href="@{/tasks/create}">Create Your First Task</a>
           </div>
 
           <div th:if="${!#lists.isEmpty(postedTasks)}">

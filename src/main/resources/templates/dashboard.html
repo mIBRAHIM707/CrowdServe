@@ -20,13 +20,13 @@
     </div>
     <button class="cs-toggle" aria-expanded="false" aria-label="Toggle navigation">☰</button>
     <div class="cs-links">
-      <a href="index.html">Home</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="my-tasks.html">My Tasks</a>
-      <a href="notifications.html">Notifications</a>
-      <a href="reports.html">Reports</a>
-      <a href="login.html">Login</a>
-      <a href="register.html" class="cs-cta">Register</a>
+      <a th:href="@{/}" href="/">Home</a>
+      <a th:href="@{/dashboard}" href="/dashboard">Dashboard</a>
+      <a th:href="@{/my-tasks}" href="/my-tasks">My Tasks</a>
+      <a th:href="@{/notifications}" href="/notifications">Notifications</a>
+      <a th:href="@{/reports}" href="/reports">Reports</a>
+      <a th:href="@{/login}" href="/login">Login</a>
+      <a th:href="@{/register}" href="/register" class="cs-cta">Register</a>
     </div>
   </nav>
 
@@ -51,7 +51,7 @@
           <h2>Open Tasks</h2>
 
           <div th:if="${#lists.isEmpty(tasks)}" class="empty">
-            No open tasks right now. <a th:href="@{/create-task}">Create the first task</a>.
+            No open tasks right now. <a th:href="@{/tasks/create}">Create the first task</a>.
           </div>
 
           <div class="task-list" th:if="${!#lists.isEmpty(tasks)}">
@@ -78,7 +78,7 @@
                 </div>
 
                 <div class="mt-10">
-                  <a th:href="@{|/task/${task.id}|}" class="btn btn-outline btn-sm">View</a>
+                  <a th:href="@{|/tasks/${task.id}|}" class="btn btn-outline btn-sm">View</a>
                 </div>
               </div>
             </div>

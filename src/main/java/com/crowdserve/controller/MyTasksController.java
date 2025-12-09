@@ -43,13 +43,15 @@ public class MyTasksController {
             return "redirect:/login";
         }
 
-        String email = principal.getName();
-        Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isEmpty()) {
+        // Resolve the current user using either username or email (depending on how they logged in)
+        String principalName = principal.getName();
+        User user = userRepository.findByUsername(principalName);
+        if (user == null) {
+            user = userRepository.findByEmail(principalName).orElse(null);
+        }
+        if (user == null) {
             return "redirect:/login";
         }
-
-        User user = userOpt.get();
 
         // Fetch tasks where this user is the poster
         List<Task> postedTasks = taskRepository.findByPoster(user);
