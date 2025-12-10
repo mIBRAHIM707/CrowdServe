@@ -21,7 +21,11 @@ public class ReportServiceImpl implements ReportService {
  
     @Autowired
     private TaskRepository taskRepository;
-  
+    
+    public ReportServiceImpl() {
+        System.out.println("ReportServiceImpl constructed finally yeahhh");
+    }
+
     @Override
     public byte[] generateCompletedTasksReport() {
         // ... (existing implementation) ...

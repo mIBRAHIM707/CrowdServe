@@ -51,49 +51,28 @@
           <h2>Available Reports</h2>
 
           <div class="report-list">
-            <!-- Task Summary Report -->
+            <!-- Task Summary Report (Completed Tasks) -->
             <div class="report-card">
               <div class="report-header">
                 <div class="report-title">Task Summary Report</div>
-                <div class="report-desc">Includes all tasks, statuses, assigned workers, timestamps, and budgets.</div>
+                <div class="report-desc">Includes all tasks with statuses, assigned workers, and budgets.</div>
               </div>
               <div class="report-footer">
-                <a th:href="@{/reports/download/csv}" class="btn btn-primary btn-sm">Download CSV</a>
+                <a th:href="@{/reports/completed-tasks}" class="btn btn-primary btn-sm">Download CSV</a>
               </div>
             </div>
 
-            <!-- User Activity Report -->
+            <!-- Top Contributors Report -->
             <div class="report-card">
               <div class="report-header">
-                <div class="report-title">User Activity Report</div>
-                <div class="report-desc">Shows logins, participation, assigned tasks, and completion patterns across your team.</div>
+                <div class="report-title">Top Contributors Report</div>
+                <div class="report-desc">Shows workers with the most completed tasks.</div>
               </div>
               <div class="report-footer">
-                <a th:href="@{/reports/download/pdf}" class="btn btn-primary btn-sm">Download PDF</a>
+                <a th:href="@{/reports/top-contributors}" class="btn btn-primary btn-sm">Download CSV</a>
               </div>
             </div>
 
-            <!-- Financial Report -->
-            <div class="report-card">
-              <div class="report-header">
-                <div class="report-title">Financial Report</div>
-                <div class="report-desc">Summaries of budgets, payments, cost distributions, and financial insights.</div>
-              </div>
-              <div class="report-footer">
-                <a th:href="@{/reports/download/csv}" class="btn btn-primary btn-sm">Download CSV</a>
-              </div>
-            </div>
-
-            <!-- Platform Analytics Report -->
-            <div class="report-card">
-              <div class="report-header">
-                <div class="report-title">Platform Analytics Report</div>
-                <div class="report-desc">High-level analytics on usage trends, task volume, and platform growth metrics.</div>
-              </div>
-              <div class="report-footer">
-                <a th:href="@{/reports/download/pdf}" class="btn btn-primary btn-sm">Download PDF</a>
-              </div>
-            </div>
           </div>
 
         </div>
