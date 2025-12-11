@@ -5,32 +5,158 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>CrowdServe — Reports Center</title>
 
-  <!-- Absolute path to ensure static resource resolution -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <link rel="stylesheet" th:href="@{/css/dashboard.css}" href="../static/css/dashboard.css">
   <link rel="stylesheet" th:href="@{/css/navbar.css}" href="../static/css/navbar.css">
+
+  <style>
+    /* --- Modern Reports UI --- */
+    :root {
+      --primary: #0b6fff;
+      --bg-light: #f3f4f6;
+      --text-dark: #1f2937;
+      --text-gray: #6b7280;
+      --border: #e5e7eb;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      margin: 0;
+    }
+
+    /* Navbar Override */
+    .cs-navbar {
+      background: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cs-links a { text-decoration: none; color: #4b5563; margin-left: 1.5rem; font-weight: 500; }
+    .cs-links a:hover { color: var(--primary); }
+    .cs-cta { background-color: var(--primary); color: white !important; padding: 0.5rem 1rem; border-radius: 6px; }
+
+    /* Layout */
+    .page { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .page-title { font-size: 1.875rem; font-weight: 700; margin-bottom: 2rem; color: #111827; }
+    
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 30px;
+    }
+
+    /* Report Grid */
+    .report-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    /* Report Card Styling */
+    .report-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .report-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      border-color: var(--primary);
+    }
+
+    .report-icon-wrapper {
+      width: 50px;
+      height: 50px;
+      background: #eaf3ff;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+
+    .report-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .report-desc {
+      color: var(--text-gray);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      flex-grow: 1; /* Pushes footer down */
+    }
+
+    .report-footer {
+      border-top: 1px solid #f3f4f6;
+      padding-top: 15px;
+    }
+
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 6px; font-size: 0.875rem; font-weight: 500; cursor: pointer; text-decoration: none; border: none; transition: background 0.2s; }
+    .btn-primary { background: var(--primary); color: white; width: 100%; }
+    .btn-primary:hover { background: #0056d6; }
+    
+    /* Sidebar */
+    .sidebar .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .card-heading { font-weight: 600; margin-bottom: 10px; font-size: 1rem; color: #111827; display: flex; align-items: center; gap: 8px; }
+    .small { font-size: 0.9rem; color: #6b7280; line-height: 1.5; }
+    .link-primary { color: var(--primary); text-decoration: none; }
+    .link-primary:hover { text-decoration: underline; }
+
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
+
   <nav class="cs-navbar" role="navigation" aria-label="Main navigation">
-    <div class="cs-brand">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+    <div class="cs-brand" style="display:flex; align-items:center; gap:8px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" style="width:24px; height:24px;">
         <circle cx="12" cy="12" r="3" stroke="#0b6fff" fill="#eaf3ff" />
         <path d="M3 12h18" stroke="#0b6fff" />
       </svg>
-      <span class="brand-text">CrowdServe</span>
+      <span class="brand-text" style="font-weight:700; font-size:1.2rem; color:#0b6fff;">CrowdServe</span>
     </div>
-    <button class="cs-toggle" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+    <button class="cs-toggle" aria-expanded="false" aria-label="Toggle navigation" style="border:none; background:none; font-size:1.5rem;">☰</button>
     <div class="cs-links">
-      <a th:href="@{/}" href="/">Home</a>
-      <a th:href="@{/dashboard}" href="/dashboard">Dashboard</a>
-      <a th:href="@{/my-tasks}" href="/my-tasks">My Tasks</a>
-      <a th:href="@{/notifications}" href="/notifications">Notifications</a>
-      <a th:href="@{/reports}" href="/reports">Reports</a>
-      <a th:href="@{/login}" href="/login">Login</a>
-      <a th:href="@{/register}" href="/register" class="cs-cta">Register</a>
+        <a th:href="@{/}" href="/">Home</a>
+        <a th:href="@{/dashboard}" href="/dashboard">Dashboard</a>
+        <a th:href="@{/my-tasks}" href="/my-tasks">My Tasks</a>
+        <a th:href="@{/notifications}" href="/notifications">Notifications</a>
+        <a th:href="@{/reports}" href="/reports">Reports</a>
+        <a th:href="@{/login}" href="/login">Login</a>
+        <a th:href="@{/register}" href="/register" class="cs-cta">Register</a>
     </div>
   </nav>
-
-  <h1 class="page-title">Reports</h1>
 
   <script>
     (function(){
@@ -45,55 +171,71 @@
   </script>
 
   <div class="page">
+    <h1 class="page-title">Reports Center</h1>
+
     <div class="layout">
+      
       <main>
         <div class="panel">
-          <h2>Available Reports</h2>
+          <h2 style="font-size:1.25rem; font-weight:600; margin-bottom:20px;">Available Reports</h2>
 
           <div class="report-list">
-            <!-- Task Summary Report (Completed Tasks) -->
+            
             <div class="report-card">
-              <div class="report-header">
-                <div class="report-title">Task Summary Report</div>
-                <div class="report-desc">Includes all tasks with statuses, assigned workers, and budgets.</div>
+              <div>
+                <div class="report-icon-wrapper">
+                    <i class="fa-solid fa-file-invoice"></i>
+                </div>
+                <div class="report-header">
+                  <div class="report-title">Task Summary Report</div>
+                  <div class="report-desc">Detailed breakdown of all tasks including current status, assigned workers, financial data, and completion timelines.</div>
+                </div>
               </div>
               <div class="report-footer">
-                <a th:href="@{/reports/completed-tasks}" class="btn btn-primary btn-sm">Download CSV</a>
+                <a th:href="@{/reports/completed-tasks}" class="btn btn-primary btn-sm">
+                    <i class="fa-solid fa-download" style="margin-right:8px;"></i> Download CSV
+                </a>
               </div>
             </div>
 
-            <!-- Top Contributors Report -->
             <div class="report-card">
-              <div class="report-header">
-                <div class="report-title">Top Contributors Report</div>
-                <div class="report-desc">Shows workers with the most completed tasks.</div>
+              <div>
+                <div class="report-icon-wrapper">
+                    <i class="fa-solid fa-users-viewfinder"></i>
+                </div>
+                <div class="report-header">
+                  <div class="report-title">Top Contributors</div>
+                  <div class="report-desc">Performance analytics showing workers with the highest task completion rates and total earnings on the platform.</div>
+                </div>
               </div>
               <div class="report-footer">
-                <a th:href="@{/reports/top-contributors}" class="btn btn-primary btn-sm">Download CSV</a>
+                <a th:href="@{/reports/top-contributors}" class="btn btn-primary btn-sm">
+                    <i class="fa-solid fa-download" style="margin-right:8px;"></i> Download CSV
+                </a>
               </div>
             </div>
 
           </div>
-
         </div>
       </main>
 
       <aside class="sidebar">
         <div class="card">
-          <div class="card-heading">About Reports</div>
-          <div class="small">Access comprehensive platform reports including task summaries, user activity, financial data, and analytics insights. All reports are generated fresh from your platform data.</div>
+          <div class="card-heading"><i class="fa-solid fa-circle-info"></i> About Reports</div>
+          <div class="small">Access comprehensive platform reports. All data is generated in real-time from your current database activity.</div>
         </div>
 
         <div class="card">
-          <div class="card-heading">Download Formats</div>
-          <div class="small">Reports are available as PDF and CSV formats depending on the report type. Choose the format that works best for your analysis.</div>
+          <div class="card-heading"><i class="fa-solid fa-file-csv"></i> Download Formats</div>
+          <div class="small">Reports are currently available in <strong>CSV format</strong>, compatible with Excel, Google Sheets, and other analytical tools.</div>
         </div>
 
         <div class="card">
-          <div class="card-heading">Support</div>
-          <div class="small">Questions about your reports? <a href="#" class="link-primary">Contact our support team</a> for assistance.</div>
+          <div class="card-heading"><i class="fa-solid fa-headset"></i> Support</div>
+          <div class="small">Questions about data discrepancies? <a href="#" class="link-primary">Contact support</a> for a manual audit.</div>
         </div>
       </aside>
+
     </div>
   </div>
 </body>
