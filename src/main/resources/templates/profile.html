@@ -1,77 +1,205 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>CrowdServe — My Profile</title>
-    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}" href="../static/css/dashboard.css">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}" href="../static/css/navbar.css">
+
     <style>
+        /* --- Modern Profile UI --- */
+        :root {
+            --primary: #0b6fff;
+            --bg-light: #f3f4f6;
+            --text-dark: #1f2937;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navbar Override */
+        .cs-navbar {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cs-links a { text-decoration: none; color: #4b5563; margin-left: 1.5rem; font-weight: 500; }
+        .cs-links a:hover { color: var(--primary); }
+        .cs-cta { background-color: var(--primary); color: white !important; padding: 0.5rem 1rem; border-radius: 6px; }
+
+        /* Page Layout */
+        .page-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        /* Profile Card */
         .profile-card {
             background: white;
             border-radius: 12px;
-            padding: 32px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 40px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            width: 100%;
             max-width: 600px;
-            margin: 0 auto;
+            border: 1px solid var(--border);
         }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+        
+        .profile-icon {
+            width: 80px;
+            height: 80px;
+            background-color: #eaf3ff;
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 15px auto;
+        }
+
+        .profile-header h2 { margin: 0; color: #111827; font-weight: 700; }
+        .profile-meta { color: #6b7280; font-size: 0.9rem; margin-top: 5px; }
+
+        /* Forms */
         .form-group { margin-bottom: 20px; }
-        .form-label { font-weight: 600; color: #374151; margin-bottom: 8px; display: block; }
+        .form-label { font-weight: 600; color: #374151; margin-bottom: 8px; display: block; font-size: 0.9rem; }
+        
         .form-control {
             width: 100%;
-            border: 2px solid #e5e7eb;
+            border: 1px solid #d1d5db;
             border-radius: 8px;
-            padding: 12px;
-            font-size: 16px;
+            padding: 10px 15px;
+            font-size: 1rem;
             box-sizing: border-box;
+            transition: border-color 0.2s;
         }
-        .form-control:focus { border-color: #0b6fff; outline: none; }
-        textarea.form-control { min-height: 100px; resize: vertical; }
+        .form-control:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(11, 111, 255, 0.1); }
+        
+        /* Disabled Inputs */
+        .form-control:disabled {
+            background-color: #f9fafb;
+            color: #6b7280;
+            border-color: #e5e7eb;
+            cursor: not-allowed;
+        }
+        
+        textarea.form-control { min-height: 120px; resize: vertical; }
+        
+        .helper-text { font-size: 0.8rem; color: #9ca3af; margin-top: 5px; display: block; }
+
+        /* Buttons */
         .btn-update {
-            background: #0b6fff;
+            background: var(--primary);
             color: white;
             border: none;
             padding: 12px 24px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
+            width: 100%;
+            transition: background 0.2s;
+            font-size: 1rem;
         }
-        .btn-update:hover { background: #0052cc; }
-        .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; }
-        .alert-success { background: #d1fae5; color: #065f46; }
-        .alert-error { background: #fee2e2; color: #991b1b; }
-        .profile-header { text-align: center; margin-bottom: 24px; }
-        .profile-header h2 { color: #0b3a8a; margin: 0; }
+        .btn-update:hover { background: #0056d6; }
+
+        .btn-logout {
+            background: white;
+            color: #dc2626;
+            border: 1px solid #fee2e2;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 15px;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover { background: #fef2f2; border-color: #dc2626; }
+
+        /* Alerts */
+        .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; }
+        .alert-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+        .btn-primary { background-color: var(--primary); color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px; display: inline-block; }
     </style>
 </head>
 <body>
-    <div class="page">
-        <header class="app-header">
-            <div class="brand">
-                <div class="logo">CS</div>
-                <div>
-                    <h1>My Profile</h1>
-                    <div class="meta">Manage your account settings</div>
-                </div>
-            </div>
-            <div class="controls">
-                <a class="btn btn-outline" th:href="@{/tasks}">Dashboard</a>
-                <a class="btn btn-outline" th:href="@{/tasks/create}">Create Task</a>
-                <form th:action="@{/logout}" method="post" style="display: inline;">
-                    <button type="submit" class="btn btn-primary">Logout</button>
-                </form>
-            </div>
-        </header>
 
+    <nav class="cs-navbar" role="navigation" aria-label="Main navigation">
+        <div class="cs-brand" style="display:flex; align-items:center; gap:8px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" style="width:24px; height:24px;">
+                <circle cx="12" cy="12" r="3" stroke="#0b6fff" fill="#eaf3ff" />
+                <path d="M3 12h18" stroke="#0b6fff" />
+            </svg>
+            <span class="brand-text" style="font-weight:700; font-size:1.2rem; color:#0b6fff;">CrowdServe</span>
+        </div>
+        <button class="cs-toggle" aria-expanded="false" aria-label="Toggle navigation" style="border:none; background:none; font-size:1.5rem;">☰</button>
+        <div class="cs-links">
+            <a th:href="@{/}" href="/">Home</a>
+            <a th:href="@{/dashboard}" href="/dashboard">Dashboard</a>
+            <a th:href="@{/my-tasks}" href="/my-tasks">My Tasks</a>
+            <a th:href="@{/notifications}" href="/notifications">Notifications</a>
+            <a th:href="@{/reports}" href="/reports">Reports</a>
+            <a th:href="@{/login}" href="/login">Login</a>
+            <a th:href="@{/register}" href="/register" class="cs-cta">Register</a>
+        </div>
+    </nav>
+
+    <script>
+        (function(){
+            var btn = document.querySelector('.cs-toggle');
+            var links = document.querySelector('.cs-links');
+            if(!btn || !links) return;
+            btn.addEventListener('click', function(){
+                var open = links.classList.toggle('open');
+                btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+        })();
+    </script>
+
+    <div class="page-content">
         <div class="profile-card">
+            
             <div class="profile-header">
-                <h2>Edit Profile</h2>
+                <div class="profile-icon">
+                    <i class="fa-regular fa-user"></i>
+                </div>
+                <h2>My Profile</h2>
+                <div class="profile-meta">Manage your account settings and preferences</div>
             </div>
 
             <div th:if="${param.success}" class="alert alert-success">
-                Profile updated successfully!
+                <i class="fa-solid fa-check-circle"></i> Profile updated successfully!
             </div>
             <div th:if="${param.error}" class="alert alert-error">
-                Error updating profile. Please try again.
+                <i class="fa-solid fa-circle-exclamation"></i> Error updating profile. Please try again.
             </div>
 
             <div th:if="${user != null}">
@@ -82,13 +210,13 @@
                     <div class="form-group">
                         <label class="form-label">Username</label>
                         <input type="text" class="form-control" th:value="${user.username}" disabled />
-                        <small style="color: #6b7280;">Username cannot be changed</small>
+                        <span class="helper-text"><i class="fa-solid fa-lock" style="font-size:0.7rem;"></i> Username cannot be changed</span>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Email</label>
+                        <label class="form-label">Email Address</label>
                         <input type="email" class="form-control" th:value="${user.email}" disabled />
-                        <small style="color: #6b7280;">Email cannot be changed</small>
+                        <span class="helper-text"><i class="fa-solid fa-lock" style="font-size:0.7rem;"></i> Email cannot be changed</span>
                     </div>
 
                     <div class="form-group">
@@ -103,15 +231,28 @@
                                   placeholder="Tell us about yourself..." th:text="${user.bio}"></textarea>
                     </div>
 
-                    <button type="submit" class="btn-update">Update Profile</button>
+                    <button type="submit" class="btn-update">
+                        <i class="fa-solid fa-save"></i> Update Profile
+                    </button>
+                </form>
+
+                <form th:action="@{/logout}" method="post" style="margin-top: 10px;">
+                    <button type="submit" class="btn-logout">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
                 </form>
             </div>
 
             <div th:if="${user == null}" style="text-align: center; padding: 20px;">
-                <p style="color: #6b7280;">User information is not available.</p>
-                <a th:href="@{/login}" class="btn btn-primary">Please Login</a>
+                <div style="font-size: 3rem; color: #d1d5db; margin-bottom: 10px;">
+                    <i class="fa-solid fa-user-slash"></i>
+                </div>
+                <p style="color: #6b7280; margin-bottom: 20px;">User information is not available.</p>
+                <a th:href="@{/login}" class="btn-primary">Please Login</a>
             </div>
+
         </div>
     </div>
+
 </body>
 </html>
