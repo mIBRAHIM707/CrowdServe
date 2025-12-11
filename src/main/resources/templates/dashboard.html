@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -204,7 +204,7 @@
         font-weight: 700;
       }
     </style>
-    <div class="cs-brand" style="display:flex; align-items:center; gap:8px;">
+    <div class="cs-brand">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" style="width:24px; height:24px; margin-right:8px;">
         <circle cx="12" cy="12" r="3" stroke="#0b6fff" fill="#eaf3ff" />
         <path d="M3 12h18" stroke="#0b6fff" />
@@ -225,12 +225,15 @@
          th:classappend="${activePage} == 'reports' ? ' nav-active' : ''">Reports</a>
       <a th:href="@{/profile}" href="/profile" class="nav-link"
          th:classappend="${activePage} == 'profile' ? ' nav-active' : ''"
+         xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
          sec:authorize="isAuthenticated()">Profile</a>
       <a th:href="@{/login}" href="/login" class="nav-link"
          th:classappend="${activePage} == 'login' ? ' nav-active' : ''"
+         xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
          sec:authorize="!isAuthenticated()">Login</a>
       <a th:href="@{/register}" href="/register" class="cs-cta nav-link"
          th:classappend="${activePage} == 'register' ? ' nav-active' : ''"
+         xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
          sec:authorize="!isAuthenticated()">Register</a>
     </div>
   </nav>

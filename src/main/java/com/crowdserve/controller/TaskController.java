@@ -83,6 +83,7 @@ public class TaskController {
         // Get task by ID
         Task task = taskWorkflowFacade.getTask(id);
         model.addAttribute("task", task);
+        model.addAttribute("activePage", "dashboard");
         
         // Get current user for authorization checks in template
         if (principal != null) {
