@@ -9,6 +9,20 @@ document.addEventListener('DOMContentLoaded', function () {
     return res.json();
   }
 
+  const unreadList = document.getElementById('unread-list');
+  const readList = document.getElementById('read-list');
+
+  function moveCardToRead(card) {
+    if (!card || !readList) return;
+    card.classList.remove('unread');
+    card.classList.add('read');
+    const badge = card.querySelector('.notification-badge');
+    if (badge) badge.remove();
+    const btn = card.querySelector('.mark-read-btn');
+    if (btn) btn.remove();
+    readList.prepend(card);
+  }
+
   // Single notification mark-as-read
   document.querySelectorAll('.mark-read-btn').forEach(btn => {
     btn.addEventListener('click', function (e) {
@@ -20,19 +34,13 @@ document.addEventListener('DOMContentLoaded', function () {
         headers: Object.assign({ 'Accept': 'application/json' }, csrfToken ? { [csrfHeader]: csrfToken } : {}),
         credentials: 'same-origin'
       }).then(handleJsonResponse)
-        .then(data => {
-          // Optimistically update UI
+        .then(() => {
           const card = document.querySelector(`.notification-card[data-id='${id}']`);
-          if (card) {
-            card.classList.remove('unread');
-            card.classList.add('read');
-            const badge = card.querySelector('.notification-badge');
-            if (badge) badge.remove();
-            const btn = card.querySelector('.mark-read-btn');
-            if (btn) {
-              btn.setAttribute('disabled', 'true');
-              btn.textContent = 'Read';
-            }
+          moveCardToRead(card);
+          const unreadCardsLeft = unreadList ? unreadList.querySelectorAll('.notification-card.unread').length : 0;
+          if (markAllBtn && unreadCardsLeft === 0) {
+            markAllBtn.setAttribute('disabled', 'true');
+            markAllBtn.textContent = 'No unread';
           }
         })
         .catch(err => {
@@ -47,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (markAllBtn) {
     markAllBtn.addEventListener('click', function () {
       const url = '/notifications/mark-all-read';
+      if (!unreadList) return;
       markAllBtn.setAttribute('disabled', 'true');
       fetch(url, {
         method: 'POST',
@@ -54,18 +63,8 @@ document.addEventListener('DOMContentLoaded', function () {
         credentials: 'same-origin'
       }).then(handleJsonResponse)
         .then(data => {
-          const cards = document.querySelectorAll('.notification-card.unread');
-          cards.forEach(card => {
-            card.classList.remove('unread');
-            card.classList.add('read');
-            const badge = card.querySelector('.notification-badge');
-            if (badge) badge.remove();
-            const btn = card.querySelector('.mark-read-btn');
-            if (btn) {
-              btn.setAttribute('disabled', 'true');
-              btn.textContent = 'Read';
-            }
-          });
+          const cards = unreadList.querySelectorAll('.notification-card.unread');
+          cards.forEach(card => moveCardToRead(card));
           markAllBtn.textContent = (data && data.marked) ? `Marked ${data.marked} read` : 'Marked read';
         })
         .catch(err => {

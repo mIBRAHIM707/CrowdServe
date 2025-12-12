@@ -55,20 +55,11 @@ public class NotificationController {
         if (user == null) {
             return "redirect:/login";
         }
-        // Retrieve notifications ordered by creation date (newest first)
-        List<Notification> notifications = notificationRepository.findByUserOrderByCreatedAtDesc(user);
+        List<Notification> unreadNotifications = notificationRepository.findByUserAndIsReadFalseOrderByCreatedAtDesc(user);
+        List<Notification> readNotifications = notificationRepository.findByUserAndIsReadTrueOrderByCreatedAtDesc(user);
 
-        // Mark unread notifications as read and persist them
-        List<Notification> unread = notificationRepository.findByUserAndIsReadFalseOrderByCreatedAtDesc(user);
-        if (!unread.isEmpty()) {
-            unread.forEach(n -> n.setRead(true));
-            notificationRepository.saveAll(unread);
-
-            // Refresh notifications list after marking as read
-            notifications = notificationRepository.findByUserOrderByCreatedAtDesc(user);
-        }
-
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("unreadNotifications", unreadNotifications);
+        model.addAttribute("readNotifications", readNotifications);
 
         // Optional: provide a human friendly timestamp formatter pattern
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MMM d, yyyy HH:mm").withZone(ZoneId.systemDefault());
@@ -79,8 +70,7 @@ public class NotificationController {
         model.addAttribute("pageTitle", "Notifications");
         model.addAttribute("pageSubtitle", "Recent alerts about your tasks and activity");
         
-        // Add unread count (now 0 since we just marked all as read, but kept for consistency)
-        long unreadCount = notificationRepository.findByUserAndIsReadFalseOrderByCreatedAtDesc(user).size();
+        long unreadCount = unreadNotifications.size();
         model.addAttribute("unreadCount", unreadCount);
 
         return "notifications";

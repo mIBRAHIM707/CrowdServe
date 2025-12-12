@@ -4,6 +4,7 @@ import com.crowdserve.dto.TaskCreationDto;
 import com.crowdserve.model.Task;
 import com.crowdserve.model.User;
 import com.crowdserve.service.TaskService;
+import com.crowdserve.service.NotificationService;
 import com.crowdserve.service.facade.TaskWorkflowFacade;
 import com.crowdserve.repository.UserRepository;
 
@@ -29,6 +30,8 @@ public class TaskController {
     private UserRepository userRepository;
     @Autowired
     private TaskWorkflowFacade taskWorkflowFacade; 
+    @Autowired
+    private NotificationService notificationService;
 
     @GetMapping("/create")
     public String showCreateTaskForm(Model model) {
@@ -67,7 +70,15 @@ public class TaskController {
             }
             
             // Create task
-            taskService.createTask(taskDto, user);
+            Task created = taskService.createTask(taskDto, user);
+
+            // Notify poster that task was created (keeps consistent UX)
+            notificationService.createNotification(
+                user,
+                "Task Created",
+                "Your task '" + created.getTitle() + "' has been posted and is now visible to workers.",
+                created
+            );
             redirectAttributes.addFlashAttribute("successMessage", "Task created successfully!");
             return "redirect:/tasks";
             
