@@ -111,6 +111,12 @@
     .btn-outline:hover { background: #f9fafb; border-color: #9ca3af; }
     .btn-danger { background: white; border: 1px solid #fecaca; color: #dc2626; }
     .btn-danger:hover { background: #fef2f2; border-color: #dc2626; }
+    .filter-active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 8px 20px rgba(11,111,255,0.18);
+    }
 
     /* Sidebar Cards */
     .sidebar-card {
@@ -172,6 +178,15 @@
 
   <div class="page">
     <h1 class="page-title">My Tasks</h1>
+
+    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; align-items:center;">
+      <span style="font-weight:600; color:#4b5563; margin-right:4px;">Filter by status:</span>
+      <a class="btn btn-outline" th:href="@{/my-tasks}" th:classappend="${filterStatus == 'ALL'} ? ' filter-active' : ''">All</a>
+      <a class="btn btn-outline" th:href="@{/my-tasks(status='OPEN')}" th:classappend="${filterStatus == 'OPEN'} ? ' filter-active' : ''">Open</a>
+      <a class="btn btn-outline" th:href="@{/my-tasks(status='ASSIGNED')}" th:classappend="${filterStatus == 'ASSIGNED'} ? ' filter-active' : ''">Assigned</a>
+      <a class="btn btn-outline" th:href="@{/my-tasks(status='COMPLETED')}" th:classappend="${filterStatus == 'COMPLETED'} ? ' filter-active' : ''">Completed</a>
+      <a class="btn btn-outline" th:href="@{/my-tasks(status='CANCELLED')}" th:classappend="${filterStatus == 'CANCELLED'} ? ' filter-active' : ''">Cancelled</a>
+    </div>
 
     <div class="layout">
       
