@@ -53,7 +53,7 @@ public class ReportsController {
         if (principal != null) {
             Optional<User> userOpt = userRepository.findByEmail(principal.getName());
             if (userOpt.isPresent()) {
-                long unreadCount = notificationService.countUnreadNotificationsForUser(userOpt.get());
+                long unreadCount = notificationService.getUnreadCount(userOpt.get());
                 model.addAttribute("unreadCount", unreadCount);
             }
         }

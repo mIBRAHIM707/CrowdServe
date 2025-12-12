@@ -4,7 +4,6 @@ import com.crowdserve.model.Notification;
 import com.crowdserve.model.User;
 import com.crowdserve.repository.NotificationRepository;
 import com.crowdserve.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.http.HttpStatus;
@@ -47,29 +46,20 @@ public class NotificationController {
             return "redirect:/login";
         }
 
-        String email = principal.getName();
-        Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isEmpty()) {
+        // Resolve current user by username or email (supports both login modes)
+        String principalName = principal.getName();
+        User user = userRepository.findByUsername(principalName);
+        if (user == null) {
+            user = userRepository.findByEmail(principalName).orElse(null);
+        }
+        if (user == null) {
             return "redirect:/login";
         }
+        List<Notification> unreadNotifications = notificationRepository.findByUserAndIsReadFalseOrderByCreatedAtDesc(user);
+        List<Notification> readNotifications = notificationRepository.findByUserAndIsReadTrueOrderByCreatedAtDesc(user);
 
-        User user = userOpt.get();
-        Long userId = user.getId();
-
-        // Retrieve notifications ordered by timestamp (newest first)
-        List<Notification> notifications = notificationRepository.findByUserIdOrderByTimestampDesc(userId);
-
-        // Mark unread notifications as read and persist them
-        List<Notification> unread = notificationRepository.findByUserIdAndReadFalse(userId);
-        if (!unread.isEmpty()) {
-            unread.forEach(n -> n.setRead(true));
-            notificationRepository.saveAll(unread);
-
-            // Refresh notifications list after marking as read
-            notifications = notificationRepository.findByUserIdOrderByTimestampDesc(userId);
-        }
-
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("unreadNotifications", unreadNotifications);
+        model.addAttribute("readNotifications", readNotifications);
 
         // Optional: provide a human friendly timestamp formatter pattern
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MMM d, yyyy HH:mm").withZone(ZoneId.systemDefault());
@@ -80,8 +70,7 @@ public class NotificationController {
         model.addAttribute("pageTitle", "Notifications");
         model.addAttribute("pageSubtitle", "Recent alerts about your tasks and activity");
         
-        // Add unread count (now 0 since we just marked all as read, but kept for consistency)
-        long unreadCount = notificationRepository.findByUserIdAndReadFalse(userId).size();
+        long unreadCount = unreadNotifications.size();
         model.addAttribute("unreadCount", unreadCount);
 
         return "notifications";
@@ -101,8 +90,11 @@ public class NotificationController {
         if (nOpt.isPresent()) {
             Notification n = nOpt.get();
             // Make sure the logged-in user owns this notification
-            Optional<User> userOpt = userRepository.findByEmail(principal.getName());
-            if (userOpt.isPresent() && n.getUserId().equals(userOpt.get().getId())) {
+            User currentUser = userRepository.findByUsername(principal.getName());
+            if (currentUser == null) {
+                currentUser = userRepository.findByEmail(principal.getName()).orElse(null);
+            }
+            if (currentUser != null && n.getUser().getId().equals(currentUser.getId())) {
                 if (!n.isRead()) {
                     n.setRead(true);
                     notificationRepository.save(n);
@@ -128,8 +120,11 @@ public class NotificationController {
         }
 
         Notification n = nOpt.get();
-        Optional<User> userOpt = userRepository.findByEmail(principal.getName());
-        if (userOpt.isEmpty() || !n.getUserId().equals(userOpt.get().getId())) {
+        User currentUser = userRepository.findByUsername(principal.getName());
+        if (currentUser == null) {
+            currentUser = userRepository.findByEmail(principal.getName()).orElse(null);
+        }
+        if (currentUser == null || !n.getUser().getId().equals(currentUser.getId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("forbidden");
         }
 
@@ -151,13 +146,14 @@ public class NotificationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("unauthenticated");
         }
 
-        Optional<User> userOpt = userRepository.findByEmail(principal.getName());
-        if (userOpt.isEmpty()) {
+        User user = userRepository.findByUsername(principal.getName());
+        if (user == null) {
+            user = userRepository.findByEmail(principal.getName()).orElse(null);
+        }
+        if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("unauthenticated");
         }
-
-        Long userId = userOpt.get().getId();
-        java.util.List<Notification> unread = notificationRepository.findByUserIdAndReadFalse(userId);
+        java.util.List<Notification> unread = notificationRepository.findByUserAndIsReadFalseOrderByCreatedAtDesc(user);
         if (unread.isEmpty()) {
             return ResponseEntity.ok(java.util.Map.of("success", true, "marked", 0));
         }
@@ -166,5 +162,32 @@ public class NotificationController {
         notificationRepository.saveAll(unread);
 
         return ResponseEntity.ok(java.util.Map.of("success", true, "marked", unread.size()));
+    }
+
+    /**
+     * AJAX endpoint: delete a notification owned by the current user.
+     */
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<?> deleteNotification(@PathVariable("id") Long id, Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("unauthenticated");
+        }
+
+        Optional<Notification> nOpt = notificationRepository.findById(id);
+        if (nOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("not_found");
+        }
+
+        Notification n = nOpt.get();
+        User currentUser = userRepository.findByUsername(principal.getName());
+        if (currentUser == null) {
+            currentUser = userRepository.findByEmail(principal.getName()).orElse(null);
+        }
+        if (currentUser == null || !n.getUser().getId().equals(currentUser.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("forbidden");
+        }
+
+        notificationRepository.delete(n);
+        return ResponseEntity.ok(java.util.Map.of("success", true, "id", id));
     }
 }

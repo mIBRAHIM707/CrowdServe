@@ -22,6 +22,9 @@ public class UserController {
 
     @GetMapping("/profile")
     public String viewProfile(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        // Always set activePage so navbar highlights Profile
+        model.addAttribute("activePage", "profile");
+
         if (userDetails == null) {
             // No authenticated principal available; return profile view without model
             return "profile";

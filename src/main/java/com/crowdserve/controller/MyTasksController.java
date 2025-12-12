@@ -1,6 +1,7 @@
 package com.crowdserve.controller;
 
 import com.crowdserve.model.Task;
+import com.crowdserve.model.TaskStatus;
 import com.crowdserve.model.User;
 import com.crowdserve.repository.TaskRepository;
 import com.crowdserve.repository.UserRepository;
@@ -11,10 +12,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Controller for managing user's task tracking page (/my-tasks).
@@ -38,18 +41,22 @@ public class MyTasksController {
      * Display the my-tasks page with both posted and assigned tasks for the logged-in user.
      */
     @GetMapping
-    public String myTasks(Principal principal, Model model) {
+    public String myTasks(@RequestParam(value = "status", required = false) String status,
+                          Principal principal,
+                          Model model) {
         if (principal == null) {
             return "redirect:/login";
         }
 
-        String email = principal.getName();
-        Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isEmpty()) {
+        // Resolve the current user using either username or email (depending on how they logged in)
+        String principalName = principal.getName();
+        User user = userRepository.findByUsername(principalName);
+        if (user == null) {
+            user = userRepository.findByEmail(principalName).orElse(null);
+        }
+        if (user == null) {
             return "redirect:/login";
         }
-
-        User user = userOpt.get();
 
         // Fetch tasks where this user is the poster
         List<Task> postedTasks = taskRepository.findByPoster(user);
@@ -57,8 +64,29 @@ public class MyTasksController {
         // Fetch tasks where this user is the assigned worker
         List<Task> assignedTasks = taskRepository.findByWorker(user);
 
+        // Optional status filter applied to both lists
+        TaskStatus parsedStatus = null;
+        if (status != null && !status.isBlank()) {
+            try {
+                parsedStatus = TaskStatus.valueOf(status.toUpperCase());
+            } catch (IllegalArgumentException ignored) {
+                parsedStatus = null; // invalid status value falls back to showing all
+            }
+        }
+
+        final TaskStatus filterStatus = parsedStatus;
+        if (filterStatus != null) {
+            postedTasks = postedTasks.stream()
+                .filter(t -> filterStatus.equals(t.getStatus()))
+                .collect(Collectors.toList());
+            assignedTasks = assignedTasks.stream()
+                .filter(t -> filterStatus.equals(t.getStatus()))
+                .collect(Collectors.toList());
+        }
+
         model.addAttribute("postedTasks", postedTasks);
         model.addAttribute("assignedTasks", assignedTasks);
+        model.addAttribute("filterStatus", filterStatus != null ? filterStatus.name() : "ALL");
         
         // Add navbar attributes
         model.addAttribute("activePage", "my-tasks");
@@ -66,7 +94,7 @@ public class MyTasksController {
         model.addAttribute("pageSubtitle", "Track tasks you've posted and work you're assigned to");
         
         // Add unread notifications count
-        long unreadCount = notificationService.countUnreadNotificationsForUser(user);
+        long unreadCount = notificationService.getUnreadCount(user);
         model.addAttribute("unreadCount", unreadCount);
 
         return "my-tasks";
@@ -88,13 +116,18 @@ public class MyTasksController {
         }
 
         Task task = taskOpt.get();
-        Optional<User> userOpt = userRepository.findByEmail(principal.getName());
-        if (userOpt.isEmpty()) {
+        // Resolve user by username or email
+        String principalName = principal.getName();
+        User user = userRepository.findByUsername(principalName);
+        if (user == null) {
+            user = userRepository.findByEmail(principalName).orElse(null);
+        }
+        if (user == null) {
             return "redirect:/login";
         }
 
         // Verify the logged-in user is the poster of this task
-        if (!task.getPoster().getId().equals(userOpt.get().getId())) {
+        if (!task.getPoster().getId().equals(user.getId())) {
             return "redirect:/my-tasks";
         }
 
@@ -123,13 +156,18 @@ public class MyTasksController {
         }
 
         Task task = taskOpt.get();
-        Optional<User> userOpt = userRepository.findByEmail(principal.getName());
-        if (userOpt.isEmpty()) {
+        // Resolve user by username or email
+        String principalName = principal.getName();
+        User user = userRepository.findByUsername(principalName);
+        if (user == null) {
+            user = userRepository.findByEmail(principalName).orElse(null);
+        }
+        if (user == null) {
             return "redirect:/login";
         }
 
         // Verify the logged-in user is the poster of this task
-        if (!task.getPoster().getId().equals(userOpt.get().getId())) {
+        if (!task.getPoster().getId().equals(user.getId())) {
             return "redirect:/my-tasks";
         }
 
@@ -158,13 +196,18 @@ public class MyTasksController {
         }
 
         Task task = taskOpt.get();
-        Optional<User> userOpt = userRepository.findByEmail(principal.getName());
-        if (userOpt.isEmpty()) {
+        // Resolve user by username or email
+        String principalName = principal.getName();
+        User user = userRepository.findByUsername(principalName);
+        if (user == null) {
+            user = userRepository.findByEmail(principalName).orElse(null);
+        }
+        if (user == null) {
             return "redirect:/login";
         }
 
         // Verify the logged-in user is the assigned worker for this task
-        if (task.getWorker() == null || !task.getWorker().getId().equals(userOpt.get().getId())) {
+        if (task.getWorker() == null || !task.getWorker().getId().equals(user.getId())) {
             return "redirect:/my-tasks";
         }
 

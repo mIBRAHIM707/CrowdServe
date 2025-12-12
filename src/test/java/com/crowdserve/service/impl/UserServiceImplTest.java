@@ -41,7 +41,6 @@ class UserServiceImplTest {
     void setUp() {
         // Set up test data
         testRegistrationDto = new UserRegistrationDto(
-            "johndoe",
             "John Doe",
             "john.doe@example.com",
             "password123"
@@ -65,10 +64,10 @@ class UserServiceImplTest {
     @Test
     void testRegisterNewUser_Success() {
         // Arrange
-        when(userRepository.findByEmail(testRegistrationDto.email()))
+        when(userRepository.findByEmail(testRegistrationDto.getEmail()))
             .thenReturn(Optional.empty());
         
-        when(passwordEncoder.encode(testRegistrationDto.password()))
+        when(passwordEncoder.encode(testRegistrationDto.getPassword()))
             .thenReturn("hashedPassword123");
         
         when(userRepository.save(any(User.class)))
@@ -86,8 +85,8 @@ class UserServiceImplTest {
             "Password should be hashed, not plain text");
 
         // Verify interactions
-        verify(userRepository, times(1)).findByEmail(testRegistrationDto.email());
-        verify(passwordEncoder, times(1)).encode(testRegistrationDto.password());
+        verify(userRepository, times(1)).findByEmail(testRegistrationDto.getEmail());
+        verify(passwordEncoder, times(1)).encode(testRegistrationDto.getPassword());
         verify(userRepository, times(1)).save(any(User.class));
     }
 
@@ -100,9 +99,9 @@ class UserServiceImplTest {
         // Arrange
         User existingUser = new User();
         existingUser.setId(1L);
-        existingUser.setEmail(testRegistrationDto.email());
+        existingUser.setEmail(testRegistrationDto.getEmail());
         
-        when(userRepository.findByEmail(testRegistrationDto.email()))
+        when(userRepository.findByEmail(testRegistrationDto.getEmail()))
             .thenReturn(Optional.of(existingUser));
 
         // Act & Assert
@@ -112,13 +111,13 @@ class UserServiceImplTest {
             "Should throw IllegalStateException when email already exists"
         );
 
-        assertTrue(exception.getMessage().contains(testRegistrationDto.email()),
+        assertTrue(exception.getMessage().contains(testRegistrationDto.getEmail()),
             "Exception message should contain the duplicate email");
         assertTrue(exception.getMessage().contains("already exists"),
             "Exception message should indicate the user already exists");
 
         // Verify that password encoding and save were never called
-        verify(userRepository, times(1)).findByEmail(testRegistrationDto.email());
+        verify(userRepository, times(1)).findByEmail(testRegistrationDto.getEmail());
         verify(passwordEncoder, never()).encode(anyString());
         verify(userRepository, never()).save(any(User.class));
     }
@@ -217,13 +216,12 @@ class UserServiceImplTest {
         String hashedPassword = "$2a$10$hashedPasswordValue";
         
         UserRegistrationDto dto = new UserRegistrationDto(
-            "testuser",
             "Test User",
             "test@example.com",
             plainPassword
         );
 
-        when(userRepository.findByEmail(dto.email()))
+        when(userRepository.findByEmail(dto.getEmail()))
             .thenReturn(Optional.empty());
         
         when(passwordEncoder.encode(plainPassword))

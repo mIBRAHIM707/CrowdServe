@@ -30,6 +30,14 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     List<Notification> findByUserAndIsReadFalseOrderByCreatedAtDesc(User user);
 
     /**
+     * Finds all read notifications for a specific user.
+     *
+     * @param user the user whose read notifications to retrieve
+     * @return list of read notifications
+     */
+    List<Notification> findByUserAndIsReadTrueOrderByCreatedAtDesc(User user);
+
+    /**
      * Counts unread notifications for a user.
      *
      * @param user the user
