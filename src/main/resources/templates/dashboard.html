@@ -273,10 +273,9 @@
                 <div class="task-desc" th:text="${task.description}">Short description of the task...</div>
                 
                 <div class="task-meta">
-                  <span th:text="'Posted by: ' + (task.poster != null ? task.poster.fullName : 'Unknown')">Posted by: —</span>
-                  <span style="color:#10b981; font-weight:bold;" th:text="'Reward: ' + (task.reward != null ? task.reward : 'N/A')">Reward: N/A</span>
-                  <span>Posted: N/A</span>
-                  <span th:text="'Location: ' + (task.location != null ? task.location : 'N/A')">Location: —</span>
+                  <span th:text="${'Posted by: ' + (task.poster != null ? task.poster.fullName : 'Unknown')}"></span>
+                  <span style="color:#10b981; font-weight:bold;" th:text="${'Reward: ' + (task.reward != null ? task.reward : 'N/A')}"></span>
+                  <span th:text="${'Location: ' + (task.location != null ? task.location : 'N/A')}"></span>
                 </div>
               </div>
 
