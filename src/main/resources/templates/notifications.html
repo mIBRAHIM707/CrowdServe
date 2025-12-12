@@ -231,7 +231,7 @@
              </button>
           </div>
 
-          <div th:if="${#lists.isEmpty(unreadNotifications) and #lists.isEmpty(readNotifications)}" class="empty-state">
+          <div id="empty-all" th:classappend="${!#lists.isEmpty(unreadNotifications) or !#lists.isEmpty(readNotifications)} ? ' hidden' : ''" class="empty-state">
             <div style="font-size: 2rem; color: #d1d5db; margin-bottom: 10px;">
               <i class="fa-regular fa-bell-slash"></i>
             </div>
@@ -269,10 +269,20 @@
                         <i class="fa-solid fa-check"></i> Mark Read
                     </button>
 
+                    <button type="button" class="btn btn-outline btn-sm delete-btn"
+                            th:attr="data-id=${notification.id}"
+                            title="Delete notification">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+
                     <noscript>
                       <form th:action="@{|/notifications/read/${notification.id}|}" method="post">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <button type="submit" class="btn btn-outline btn-sm">Mark read</button>
+                      </form>
+                      <form th:action="@{|/notifications/delete/${notification.id}|}" method="post" style="margin-top:6px;">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" class="btn btn-outline btn-sm">Delete</button>
                       </form>
                     </noscript>
                   </div>
@@ -282,13 +292,13 @@
             </div>
           </div>
 
-          <div th:if="${#lists.isEmpty(unreadNotifications)}" style="margin: 10px 0 20px; color:#6b7280;">
+          <div id="no-new" th:classappend="${!#lists.isEmpty(unreadNotifications)} ? ' hidden' : ''" style="margin: 10px 0 20px; color:#6b7280;">
             No new notifications.
           </div>
 
           <div style="margin-top: 24px;">
             <h3 style="margin: 0 0 12px 0;">Read</h3>
-            <div class="notification-list" id="read-list" th:if="${!#lists.isEmpty(readNotifications)}">
+            <div class="notification-list" id="read-list" th:classappend="${#lists.isEmpty(readNotifications)} ? ' hidden' : ''">
               <div th:each="notification : ${readNotifications}" 
                    class="notification-card read"
                    th:attr="data-id=${notification.id}">
@@ -310,13 +320,19 @@
                        <i class="fa-regular fa-clock"></i> 
                        <span th:text="${#temporals.format(notification.createdAt, 'MMM d, HH:mm')}">Apr 1, 12:00</span>
                     </div>
+
+                  <button type="button" class="btn btn-outline btn-sm delete-btn"
+                          th:attr="data-id=${notification.id}"
+                          title="Delete notification">
+                      <i class="fa-solid fa-trash"></i>
+                  </button>
                   </div>
                 </div>
 
               </div>
             </div>
 
-            <div th:if="${#lists.isEmpty(readNotifications)}" class="small" style="color:#9ca3af;">
+            <div id="no-read" th:classappend="${!#lists.isEmpty(readNotifications)} ? ' hidden' : ''" class="small" style="color:#9ca3af;">
               Nothing here yet. Mark notifications read to keep an archive.
             </div>
           </div>

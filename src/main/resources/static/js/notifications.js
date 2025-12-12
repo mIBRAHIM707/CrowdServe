@@ -11,6 +11,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const unreadList = document.getElementById('unread-list');
   const readList = document.getElementById('read-list');
+  const emptyAll = document.getElementById('empty-all');
+  const noNew = document.getElementById('no-new');
+  const noRead = document.getElementById('no-read');
+  const markAllBtn = document.getElementById('mark-all-read-btn');
+
+  function toggle(el, show) {
+    if (!el) return;
+    el.style.display = show ? '' : 'none';
+  }
+
+  function syncStates() {
+    const unreadCount = unreadList ? unreadList.querySelectorAll('.notification-card').length : 0;
+    const readCount = readList ? readList.querySelectorAll('.notification-card').length : 0;
+
+    toggle(unreadList, unreadCount > 0);
+    toggle(readList, readCount > 0);
+    toggle(noNew, unreadCount === 0);
+    toggle(noRead, readCount === 0);
+
+    const allEmpty = unreadCount === 0 && readCount === 0;
+    toggle(emptyAll, allEmpty);
+
+    if (markAllBtn) {
+      if (unreadCount === 0) {
+        markAllBtn.setAttribute('disabled', 'true');
+        markAllBtn.textContent = 'No unread';
+      } else {
+        markAllBtn.removeAttribute('disabled');
+        markAllBtn.textContent = 'Mark all as read';
+      }
+    }
+  }
+
+  syncStates();
 
   function moveCardToRead(card) {
     if (!card || !readList) return;
@@ -38,9 +72,8 @@ document.addEventListener('DOMContentLoaded', function () {
           const card = document.querySelector(`.notification-card[data-id='${id}']`);
           moveCardToRead(card);
           const unreadCardsLeft = unreadList ? unreadList.querySelectorAll('.notification-card.unread').length : 0;
-          if (markAllBtn && unreadCardsLeft === 0) {
-            markAllBtn.setAttribute('disabled', 'true');
-            markAllBtn.textContent = 'No unread';
+          if (unreadCardsLeft === 0) {
+            syncStates();
           }
         })
         .catch(err => {
@@ -50,8 +83,35 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // Delete notification
+  document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const id = this.getAttribute('data-id');
+      if (!id) return;
+      const url = `/notifications/delete/${id}`;
+      fetch(url, {
+        method: 'POST',
+        headers: Object.assign({ 'Accept': 'application/json' }, csrfToken ? { [csrfHeader]: csrfToken } : {}),
+        credentials: 'same-origin'
+      }).then(handleJsonResponse)
+        .then(() => {
+          const card = document.querySelector(`.notification-card[data-id='${id}']`);
+          if (card) {
+            const parentList = card.parentElement;
+            card.remove();
+            if (parentList && parentList.classList.contains('notification-list')) {
+              syncStates();
+            }
+          }
+        })
+        .catch(err => {
+          console.error('Failed to delete notification', err);
+          alert('Could not delete notification. Please try again.');
+        });
+    });
+  });
+
   // Mark all as read
-  const markAllBtn = document.getElementById('mark-all-read-btn');
   if (markAllBtn) {
     markAllBtn.addEventListener('click', function () {
       const url = '/notifications/mark-all-read';
@@ -66,6 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
           const cards = unreadList.querySelectorAll('.notification-card.unread');
           cards.forEach(card => moveCardToRead(card));
           markAllBtn.textContent = (data && data.marked) ? `Marked ${data.marked} read` : 'Marked read';
+          syncStates();
         })
         .catch(err => {
           console.error('Failed to mark all as read', err);

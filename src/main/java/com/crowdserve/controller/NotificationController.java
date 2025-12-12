@@ -163,4 +163,31 @@ public class NotificationController {
 
         return ResponseEntity.ok(java.util.Map.of("success", true, "marked", unread.size()));
     }
+
+    /**
+     * AJAX endpoint: delete a notification owned by the current user.
+     */
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<?> deleteNotification(@PathVariable("id") Long id, Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("unauthenticated");
+        }
+
+        Optional<Notification> nOpt = notificationRepository.findById(id);
+        if (nOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("not_found");
+        }
+
+        Notification n = nOpt.get();
+        User currentUser = userRepository.findByUsername(principal.getName());
+        if (currentUser == null) {
+            currentUser = userRepository.findByEmail(principal.getName()).orElse(null);
+        }
+        if (currentUser == null || !n.getUser().getId().equals(currentUser.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("forbidden");
+        }
+
+        notificationRepository.delete(n);
+        return ResponseEntity.ok(java.util.Map.of("success", true, "id", id));
+    }
 }
