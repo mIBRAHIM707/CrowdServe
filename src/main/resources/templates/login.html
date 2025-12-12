@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,6 +45,8 @@
             padding: 0.5rem 1rem; 
             border-radius: 6px; 
         }
+        .nav-user { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:10px; background:#f3f4f6; color:#111827; font-weight:700; }
+        .nav-user .user-icon { color:#0b6fff; }
 
         /* Login Specific Container */
         .login-wrapper {
@@ -164,8 +166,13 @@
             <a th:href="@{/my-tasks}" href="/my-tasks">My Tasks</a>
             <a th:href="@{/notifications}" href="/notifications">Notifications</a>
             <a th:href="@{/reports}" href="/reports">Reports</a>
-            <a th:href="@{/login}" href="/login" style="color:#0b6fff;">Login</a>
-            <a th:href="@{/register}" href="/register" class="cs-cta">Register</a>
+            <span class="nav-user" sec:authorize="isAuthenticated()">
+                <i class="fa-solid fa-user user-icon" aria-hidden="true"></i>
+                <span sec:authentication="name">User</span>
+            </span>
+            <a th:href="@{/profile}" href="/profile" sec:authorize="isAuthenticated()">Profile</a>
+            <a th:href="@{/login}" href="/login" style="color:#0b6fff;" sec:authorize="!isAuthenticated()">Login</a>
+            <a th:href="@{/register}" href="/register" class="cs-cta" sec:authorize="!isAuthenticated()">Register</a>
         </div>
     </nav>
 
