@@ -2,6 +2,7 @@ package com.crowdserve;
 
 import com.crowdserve.dto.UserRegistrationDto;
 import com.crowdserve.repository.UserRepository;
+import com.crowdserve.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,13 @@ public class AuthenticationIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private TaskRepository taskRepository;
+
     @BeforeEach
     void setup() {
+        // Clear tasks first to avoid FK constraints, then users.
+        taskRepository.deleteAll();
         userRepository.deleteAll();
     }
 
@@ -36,7 +42,6 @@ public class AuthenticationIntegrationTest {
         mockMvc.perform(post("/register")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("username", "testuser")
                 .param("fullName", "Test User")
                 .param("email", "test@example.com")
                 .param("password", "password123"))
@@ -44,15 +49,16 @@ public class AuthenticationIntegrationTest {
                 .andExpect(redirectedUrl("/login"));
 
         // Verify user is in DB
-        assert userRepository.findByUsername("testuser") != null;
+        assert userRepository.findByEmail("test@example.com").isPresent();
 
         // 2. Test Login
         mockMvc.perform(post("/login")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("username", "testuser")
+                // Login accepts username or email; service uses email as username surrogate
+                .param("username", "test@example.com")
                 .param("password", "password123"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(redirectedUrl("/tasks"));
     }
 }

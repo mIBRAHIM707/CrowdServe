@@ -53,21 +53,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User registerNewUser(UserRegistrationDto registrationDto) {
         // Check if user with this email already exists
-        Optional<User> existingUser = userRepository.findByEmail(registrationDto.email());
+        Optional<User> existingUser = userRepository.findByEmail(registrationDto.getEmail());
         if (existingUser.isPresent()) {
             throw new IllegalStateException(
-                "User with email '" + registrationDto.email() + "' already exists"
+                "User with email '" + registrationDto.getEmail() + "' already exists"
             );
         }
 
         // Create new user entity
         User newUser = new User();
-        newUser.setUsername(registrationDto.username());
-        newUser.setFullName(registrationDto.fullName());
-        newUser.setEmail(registrationDto.email());
+        // No explicit username field in the DTO; use email as a unique username surrogate.
+        newUser.setUsername(registrationDto.getEmail());
+        newUser.setFullName(registrationDto.getFullName());
+        newUser.setEmail(registrationDto.getEmail());
         
         // Hash the password before saving (CRITICAL for security)
-        String hashedPassword = passwordEncoder.encode(registrationDto.password());
+        String hashedPassword = passwordEncoder.encode(registrationDto.getPassword());
         newUser.setPassword(hashedPassword);
 
         // Save and return the new user

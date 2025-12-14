@@ -136,6 +136,18 @@
 .btn-primary { background:#111827; color:#fff; padding:7px 12px; border-radius:8px; text-decoration:none; display:inline-block; }
 .btn-primary:hover { background:#0b1220; box-shadow: 0 4px 14px rgba(17,24,39,0.12); }
 
+.nav-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #f3f4f6;
+  color: #111827;
+  font-weight: 700;
+}
+.nav-user .user-icon { color: #0b6fff; }
+
 /* CSS-only toggle using checkbox hack */
 .cs-toggle-checkbox { display:none; }
 .cs-toggle { display:none; cursor:pointer; font-size:20px; background:transparent; border:none; }

@@ -1,21 +1,81 @@
-<nav xmlns:th="http://www.thymeleaf.org" th:fragment="navbar" class="app-navbar">
-  <!-- Logo/Icon -->
-  <div class="navbar-brand">
-    <svg class="navbar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<nav xmlns:th="http://www.thymeleaf.org"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+     th:fragment="navbar"
+     class="cs-navbar"
+     role="navigation"
+     aria-label="Main navigation"
+     style="padding: 18px 32px; font-size: 15px;">
+
+  <style>
+    .nav-link {
+      color: #4b5563;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-link:hover {
+      color: #0b6fff;
+      background: rgba(11,111,255,0.08);
+    }
+    .nav-active {
+      color: #0b6fff !important;
+      background: rgba(11,111,255,0.12);
+      font-weight: 700;
+    }
+    .cs-cta {
+      background: #0b6fff;
+      color: #fff !important;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+    .nav-user {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: #f3f4f6;
+      color: #111827;
+      font-weight: 700;
+    }
+    .nav-user .user-icon { color: #0b6fff; }
+  </style>
+  <!-- Logo / Brand -->
+  <div class="cs-brand" style="display:flex; align-items:center; gap:8px;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" style="width:24px; height:24px;">
       <circle cx="12" cy="12" r="1"></circle>
       <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m2.12 2.12l4.24 4.24M1 12h6m6 0h6m-17.78 7.78l4.24-4.24m2.12-2.12l4.24-4.24"></path>
     </svg>
-    <span class="navbar-brand-text">CrowdServe</span>
+    <span class="brand-text" style="font-weight:700; font-size:1.1rem; color:#0b6fff;">CrowdServe</span>
   </div>
 
   <!-- Navigation Links -->
-  <div class="navbar-links">
-    <a th:href="@{/}" class="nav-link">Home</a>
-    <a th:href="@{/dashboard}" class="nav-link">Dashboard</a>
-    <a th:href="@{/my-tasks}" class="nav-link">My Tasks</a>
-    <a th:href="@{/notifications}" class="nav-link">Notifications</a>
-    <a th:href="@{/reports}" class="nav-link">Reports</a>
-    <a th:href="@{/login}" class="nav-link">Login</a>
-    <a th:href="@{/register}" class="nav-link">Register</a>
+  <div class="cs-links" style="display:flex; align-items:center; gap:18px;">
+    <a th:href="@{/}" href="/" class="nav-link"
+       th:classappend="${activePage} == 'home' ? ' nav-active' : ''">Home</a>
+    <a th:href="@{/dashboard}" href="/dashboard" class="nav-link"
+       th:classappend="${activePage} == 'dashboard' ? ' nav-active' : ''">Dashboard</a>
+    <a th:href="@{/my-tasks}" href="/my-tasks" class="nav-link"
+       th:classappend="${activePage} == 'my-tasks' ? ' nav-active' : ''">My Tasks</a>
+    <a th:href="@{/notifications}" href="/notifications" class="nav-link"
+       th:classappend="${activePage} == 'notifications' ? ' nav-active' : ''">Notifications</a>
+    <a th:href="@{/reports}" href="/reports" class="nav-link"
+       th:classappend="${activePage} == 'reports' ? ' nav-active' : ''">Reports</a>
+    <span class="nav-user" sec:authorize="isAuthenticated()">
+      <i class="fa-solid fa-user user-icon" aria-hidden="true"></i>
+      <span sec:authentication="name">User</span>
+    </span>
+    <a th:href="@{/profile}" href="/profile" class="nav-link"
+       th:classappend="${activePage} == 'profile' ? ' nav-active' : ''"
+       sec:authorize="isAuthenticated()">Profile</a>
+    <a th:href="@{/login}" href="/login" class="nav-link"
+       th:classappend="${activePage} == 'login' ? ' nav-active' : ''"
+       sec:authorize="!isAuthenticated()">Login</a>
+    <a th:href="@{/register}" href="/register" class="cs-cta nav-link"
+       th:classappend="${activePage} == 'register' ? ' nav-active' : ''"
+       sec:authorize="!isAuthenticated()">Register</a>
   </div>
 </nav>

@@ -1,116 +1,343 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>CrowdServe — Dashboard</title>
 
-  <!-- Absolute path to ensure static resource resolution -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" th:href="@{/css/dashboard.css}" href="../static/css/dashboard.css">
   <link rel="stylesheet" th:href="@{/css/navbar.css}" href="../static/css/navbar.css">
+
+  <style>
+    /* --- Modern UI Enhancements (Internal CSS) --- */
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f3f4f6; /* Light gray background */
+      color: #1f2937;
+      margin: 0;
+    }
+
+    /* Page Layout */
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .layout {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    main {
+      flex: 1; /* Takes remaining space */
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+      width: 300px;
+      flex-shrink: 0;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .card-heading {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: #111827;
+      border-bottom: 2px solid #f3f4f6;
+      padding-bottom: 10px;
+    }
+
+    /* Task List Styling */
+    .task {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .task:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .task-left {
+      flex: 1;
+      padding-right: 20px;
+    }
+
+    .task-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #0b6fff;
+      margin-bottom: 8px;
+    }
+
+    .task-desc {
+      color: #4b5563;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    .task-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      font-size: 0.85rem;
+      color: #6b7280;
+      background: #f9fafb;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    .task-meta span {
+      display: inline-block;
+    }
+
+    /* Task Right Side (Status & Button) */
+    .task-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: space-between;
+      min-width: 120px;
+    }
+
+    /* Status Badges */
+    .status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .status-open { background-color: #dbeafe; color: #1e40af; }
+    .status-assigned { background-color: #ffedd5; color: #9a3412; }
+    .status-completed { background-color: #dcfce7; color: #166534; }
+
+    /* Buttons */
+    .btn {
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: background 0.2s;
+      display: inline-block;
+    }
+    .btn-primary {
+      background-color: #0b6fff;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #0056d6;
+    }
+    .btn-outline {
+      border: 1px solid #d1d5db;
+      color: #374151;
+      background: white;
+    }
+    .btn-outline:hover {
+      background-color: #f3f4f6;
+      border-color: #9ca3af;
+    }
+
+    /* Links */
+    a { text-decoration: none; color: inherit; }
+    .small a { color: #0b6fff; }
+    .small a:hover { text-decoration: underline; }
+
+    /* Empty State */
+    .empty {
+      background: white;
+      padding: 40px;
+      text-align: center;
+      border-radius: 8px;
+      color: #6b7280;
+      border: 2px dashed #e5e7eb;
+    }
+  </style>
 </head>
 <body>
-  <nav class="cs-navbar" role="navigation" aria-label="Main navigation">
+
+  <nav class="cs-navbar" role="navigation" aria-label="Main navigation" style="padding:18px 32px; font-size:15px;">
+    <style>
+      .nav-link {
+        color: #4b5563;
+        padding: 8px 12px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+      }
+      .nav-link:hover {
+        color: #0b6fff;
+        background: rgba(11,111,255,0.08);
+      }
+      .nav-active {
+        color: #0b6fff !important;
+        background: rgba(11,111,255,0.12);
+        font-weight: 700;
+      }
+      .cs-cta {
+        background: #0b6fff;
+        color: #fff !important;
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-weight: 700;
+      }
+      .nav-user {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 10px;
+        background: #f3f4f6;
+        color: #111827;
+        font-weight: 700;
+      }
+      .nav-user .user-icon { color: #0b6fff; }
+    </style>
     <div class="cs-brand">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" style="width:24px; height:24px; margin-right:8px;">
         <circle cx="12" cy="12" r="3" stroke="#0b6fff" fill="#eaf3ff" />
         <path d="M3 12h18" stroke="#0b6fff" />
       </svg>
-      <span class="brand-text">CrowdServe</span>
+      <span class="brand-text" style="font-weight:bold; font-size:1.2rem;">CrowdServe</span>
     </div>
     <button class="cs-toggle" aria-expanded="false" aria-label="Toggle navigation">☰</button>
-    <div class="cs-links">
-      <a href="index.html">Home</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="my-tasks.html">My Tasks</a>
-      <a href="notifications.html">Notifications</a>
-      <a href="reports.html">Reports</a>
-      <a href="login.html">Login</a>
-      <a href="register.html" class="cs-cta">Register</a>
+    <div class="cs-links" style="display:flex; align-items:center; gap:18px;">
+      <a th:href="@{/}" href="/" class="nav-link"
+         th:classappend="${activePage} == 'home' ? ' nav-active' : ''">Home</a>
+      <a th:href="@{/dashboard}" href="/dashboard" class="nav-link"
+         th:classappend="${activePage} == 'dashboard' ? ' nav-active' : ''">Dashboard</a>
+      <a th:href="@{/my-tasks}" href="/my-tasks" class="nav-link"
+         th:classappend="${activePage} == 'my-tasks' ? ' nav-active' : ''">My Tasks</a>
+      <a th:href="@{/notifications}" href="/notifications" class="nav-link"
+         th:classappend="${activePage} == 'notifications' ? ' nav-active' : ''">Notifications</a>
+      <a th:href="@{/reports}" href="/reports" class="nav-link"
+         th:classappend="${activePage} == 'reports' ? ' nav-active' : ''">Reports</a>
+      <span class="nav-user" sec:authorize="isAuthenticated()">
+        <i class="fa-solid fa-user user-icon" aria-hidden="true"></i>
+        <span sec:authentication="name">User</span>
+      </span>
+      <a th:href="@{/profile}" href="/profile" class="nav-link"
+         th:classappend="${activePage} == 'profile' ? ' nav-active' : ''"
+         xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+         sec:authorize="isAuthenticated()">Profile</a>
+      <a th:href="@{/login}" href="/login" class="nav-link"
+         th:classappend="${activePage} == 'login' ? ' nav-active' : ''"
+         xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+         sec:authorize="!isAuthenticated()">Login</a>
+      <a th:href="@{/register}" href="/register" class="cs-cta nav-link"
+         th:classappend="${activePage} == 'register' ? ' nav-active' : ''"
+         xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+         sec:authorize="!isAuthenticated()">Register</a>
     </div>
   </nav>
 
-  <h1 class="page-title">Dashboard</h1>
-
-  <script>
-    (function(){
-      var btn = document.querySelector('.cs-toggle');
-      var links = document.querySelector('.cs-links');
-      if(!btn || !links) return;
-      btn.addEventListener('click', function(){
-        var open = links.classList.toggle('open');
-        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      });
-    })();
-  </script>
-
   <div class="page">
+    <h1 class="page-title" style="margin-bottom: 20px;">Dashboard</h1>
+
+    <script>
+      (function(){
+        var btn = document.querySelector('.cs-toggle');
+        var links = document.querySelector('.cs-links');
+        if(!btn || !links) return;
+        btn.addEventListener('click', function(){
+          var open = links.classList.toggle('open');
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+      })();
+    </script>
+
     <div class="layout">
       <main>
         <div class="panel">
-          <h2>Open Tasks</h2>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0;">Open Tasks</h2>
+            <a th:href="@{/tasks/create}" class="btn btn-primary">+ Create New Task</a>
+          </div>
 
           <div th:if="${#lists.isEmpty(tasks)}" class="empty">
-            No open tasks right now. <a th:href="@{/create-task}">Create the first task</a>.
+            No open tasks right now. <a th:href="@{/tasks/create}" style="color:#0b6fff; font-weight:bold;">Create the first task</a>.
           </div>
 
           <div class="task-list" th:if="${!#lists.isEmpty(tasks)}">
             <div th:each="task : ${tasks}" class="task">
+              
               <div class="task-left">
                 <div class="task-title" th:text="${task.title}">Task title</div>
                 <div class="task-desc" th:text="${task.description}">Short description of the task...</div>
+                
                 <div class="task-meta">
-                  <span th:text="'Posted by: ' + (task.posterName != null ? task.posterName : task.posterId)">Posted by: —</span>
-                  <span th:text="'Budget: ' + (task.budget != null ? task.budget : 'N/A')">Budget: N/A</span>
-                  <span th:text="'Posted: ' + (task.createdAt != null ? task.createdAt : '')">Posted: —</span>
-                  <span th:text="'Location: ' + (task.location != null ? task.location : 'N/A')">Location: —</span>
+                  <span th:text="${'Posted by: ' + (task.poster != null ? task.poster.fullName : 'Unknown')}"></span>
+                  <span style="color:#10b981; font-weight:bold;" th:text="${'Reward: ' + (task.reward != null ? task.reward : 'N/A')}"></span>
+                  <span th:text="${'Location: ' + (task.location != null ? task.location : 'N/A')}"></span>
                 </div>
               </div>
 
               <div class="task-right">
-                <!-- status (open/assigned/completed) -->
                 <div th:switch="${task.status}">
                   <span th:case="'OPEN'" class="status status-open" th:text="${task.status}">OPEN</span>
                   <span th:case="'ASSIGNED'" class="status status-assigned" th:text="${task.status}">ASSIGNED</span>
                   <span th:case="'COMPLETED'" class="status status-completed" th:text="${task.status}">COMPLETED</span>
-                  <span th:case="*"
-                        class="status" th:text="${task.status}">UNKNOWN</span>
+                  <span th:case="*" class="status" th:text="${task.status}">UNKNOWN</span>
                 </div>
 
-                <div class="mt-10">
-                  <a th:href="@{|/task/${task.id}|}" class="btn btn-outline btn-sm">View</a>
+                <div class="mt-10" style="margin-top: 10px;">
+                  <a th:href="@{|/tasks/${task.id}|}" class="btn btn-outline btn-sm">View Details</a>
                 </div>
               </div>
+
             </div>
           </div>
-
         </div>
       </main>
 
       <aside class="sidebar">
+        
         <div class="card">
           <div class="card-row">
             <div>
               <div class="card-heading">Quick Filters</div>
-              <div class="small">Open / Assigned / Completed</div>
+              <div class="small" style="color: #6b7280; margin-bottom:10px;">Filter by status:</div>
             </div>
             <div>
-              <a th:href="@{/dashboard?filter=open}" class="small">Open</a><br>
-              <a th:href="@{/dashboard?filter=assigned}" class="small">Assigned</a><br>
-              <a th:href="@{/dashboard?filter=completed}" class="small">Completed</a>
+              <a th:href="@{/dashboard?filter=open}" class="small" style="display:block; margin-bottom:5px;">Open Tasks</a>
+              <a th:href="@{/dashboard?filter=assigned}" class="small" style="display:block; margin-bottom:5px;">Assigned Tasks</a>
+              <a th:href="@{/dashboard?filter=completed}" class="small" style="display:block;">Completed Tasks</a>
             </div>
           </div>
         </div>
 
         <div class="card">
           <div class="card-heading">Stats</div>
-          <div class="small">Total open: <span th:text="${#lists.size(tasks)}">0</span></div>
+          <div class="small">Total open: <span style="font-weight:bold; color:#0b6fff;" th:text="${#lists.size(tasks)}">0</span></div>
         </div>
 
         <div class="card">
           <div class="card-heading">Help</div>
           <div class="small">Need help? Reach out to the team.</div>
         </div>
+
       </aside>
     </div>
   </div>

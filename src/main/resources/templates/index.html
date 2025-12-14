@@ -1,107 +1,281 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CrowdServe - Home</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" th:href="@{/css/navbar.css}" href="../static/css/navbar.css">
+
     <style>
+        /* --- Modern Landing Page Styles --- */
+        :root {
+            --primary: #0b6fff;
+            --primary-dark: #0056d6;
+            --text-dark: #1f2937;
+            --text-gray: #4b5563;
+            --bg-light: #f3f4f6;
+            --card-white: #ffffff;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            margin: 0;
+            line-height: 1.6;
         }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+        /* Navbar Override (Matches other pages) */
+        .cs-navbar {
+            background: var(--card-white);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        h1 {
-            color: #333;
-        }
-        .links {
-            margin-top: 20px;
-        }
-        a {
-            display: inline-block;
-            margin: 10px 10px 10px 0;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
+        .cs-links a {
             text-decoration: none;
+            color: var(--text-gray);
+            margin-left: 1.5rem;
+            font-weight: 500;
+        }
+        .cs-links a:hover { color: var(--primary); }
+        .cs-cta { 
+            background-color: var(--primary); 
+            color: white !important; 
+            padding: 0.5rem 1rem; 
+            border-radius: 6px; 
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            padding: 40px 0 60px 0;
+        }
+        
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            letter-spacing: -0.02em;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-gray);
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 50px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(11, 111, 255, 0.2);
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: var(--text-dark);
+            border: 1px solid #e5e7eb;
+        }
+
+        /* Developer Card Styles */
+        .dev-card {
+            background: var(--card-white);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            margin-bottom: 30px;
+        }
+
+        .dev-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .dev-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1e40af; /* Dark Blue */
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .info-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            display: block;
+        }
+        
+        .code-text {
+            font-family: 'Monaco', 'Consolas', monospace;
+            color: #334155;
+            font-size: 0.95rem;
+            background: #e2e8f0;
+            padding: 2px 6px;
             border-radius: 4px;
         }
-        a:hover {
-            background-color: #0056b3;
+
+        /* Footer Status */
+        .status-footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px dashed #d1d5db;
         }
-        .info {
-            background-color: #e7f3ff;
-            padding: 15px;
-            border-left: 4px solid #007bff;
-            margin: 20px 0;
+        .badge-success {
+            background: #dcfce7;
+            color: #166534;
+            padding: 4px 10px;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            font-weight: 600;
         }
     </style>
-    <link rel="stylesheet" th:href="@{/css/navbar.css}" href="../static/css/navbar.css">
 </head>
 <body>
-        <nav class="cs-navbar" role="navigation" aria-label="Main navigation">
-            <div class="cs-brand">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                    <circle cx="12" cy="12" r="3" stroke="#0b6fff" fill="#eaf3ff" />
-                    <path d="M3 12h18" stroke="#0b6fff" />
-                </svg>
-                <span class="brand-text">CrowdServe</span>
-            </div>
-            <button class="cs-toggle" aria-expanded="false" aria-label="Toggle navigation">☰</button>
-            <div class="cs-links">
-                <a href="index.html">Home</a>
-                <a href="dashboard.html">Dashboard</a>
-                <a href="my-tasks.html">My Tasks</a>
-                <a href="notifications.html">Notifications</a>
-                <a href="reports.html">Reports</a>
-                <a href="login.html">Login</a>
-                <a href="register.html" class="cs-cta">Register</a>
-            </div>
-        </nav>
 
-        <h1 class="page-title">Home</h1>
+    <nav class="cs-navbar" role="navigation" aria-label="Main navigation" style="padding:18px 32px; font-size:15px;">
+        <style>
+            .nav-link { color: #4b5563; padding: 8px 12px; border-radius: 10px; font-weight: 600; text-decoration: none; transition: background 0.2s, color 0.2s; }
+            .nav-link:hover { color: #0b6fff; background: rgba(11,111,255,0.08); }
+            .nav-active { color: #0b6fff !important; background: rgba(11,111,255,0.12); font-weight: 700; }
+            .cs-cta { background: #0b6fff; color: #fff !important; padding: 10px 16px; border-radius: 10px; font-weight: 700; }
+            .nav-user { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: #f3f4f6; color: #111827; font-weight: 700; }
+            .nav-user .user-icon { color: #0b6fff; }
+        </style>
+        <div class="cs-brand" style="display:flex; align-items:center; gap:8px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" style="width:24px; height:24px;">
+                <circle cx="12" cy="12" r="3" stroke="#0b6fff" fill="#eaf3ff" />
+                <path d="M3 12h18" stroke="#0b6fff" />
+            </svg>
+            <span class="brand-text" style="font-weight:700; font-size:1.2rem; color:#0b6fff;">CrowdServe</span>
+        </div>
+        <button class="cs-toggle" aria-expanded="false" aria-label="Toggle navigation" style="border:none; background:none; font-size:1.5rem;">☰</button>
+        <div class="cs-links" style="display:flex; align-items:center; gap:18px;">
+            <a th:href="@{/}" href="/" class="nav-link" th:classappend="${activePage} == 'home' ? ' nav-active' : ''">Home</a>
+            <a th:href="@{/dashboard}" href="/dashboard" class="nav-link" th:classappend="${activePage} == 'dashboard' ? ' nav-active' : ''">Dashboard</a>
+            <a th:href="@{/my-tasks}" href="/my-tasks" class="nav-link" th:classappend="${activePage} == 'my-tasks' ? ' nav-active' : ''">My Tasks</a>
+            <a th:href="@{/notifications}" href="/notifications" class="nav-link" th:classappend="${activePage} == 'notifications' ? ' nav-active' : ''">Notifications</a>
+            <a th:href="@{/reports}" href="/reports" class="nav-link" th:classappend="${activePage} == 'reports' ? ' nav-active' : ''">Reports</a>
+            <span class="nav-user" sec:authorize="isAuthenticated()">
+                <i class="fa-solid fa-user user-icon" aria-hidden="true"></i>
+                <span sec:authentication="name">User</span>
+            </span>
+            <a th:href="@{/profile}" href="/profile" class="nav-link" th:classappend="${activePage} == 'profile' ? ' nav-active' : ''" sec:authorize="isAuthenticated()">Profile</a>
+            <a th:href="@{/login}" href="/login" class="nav-link" th:classappend="${activePage} == 'login' ? ' nav-active' : ''" sec:authorize="!isAuthenticated()">Login</a>
+            <a th:href="@{/register}" href="/register" class="cs-cta nav-link" th:classappend="${activePage} == 'register' ? ' nav-active' : ''" sec:authorize="!isAuthenticated()">Register</a>
+        </div>
+    </nav>
 
-        <script>
-            (function(){
-                var btn = document.querySelector('.cs-toggle');
-                var links = document.querySelector('.cs-links');
-                if(!btn || !links) return;
-                btn.addEventListener('click', function(){
-                    var open = links.classList.toggle('open');
-                    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-                });
-            })();
-        </script>
+    <script>
+        (function(){
+            var btn = document.querySelector('.cs-toggle');
+            var links = document.querySelector('.cs-links');
+            if(!btn || !links) return;
+            btn.addEventListener('click', function(){
+                var open = links.classList.toggle('open');
+                btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+        })();
+    </script>
 
-        <div class="container">
-        <h1>Welcome to CrowdServe! 🎉</h1>
-        <p>A localized, real-time crowdsourcing platform</p>
+    <div class="main-container">
         
-        <div class="info">
-            <h3>Development Mode Active</h3>
-            <p><strong>H2 Console:</strong> <a href="/h2-console" target="_blank">Access Database Console</a></p>
-            <p><strong>JDBC URL:</strong> jdbc:h2:mem:crowdserve</p>
-            <p><strong>Username:</strong> sa</p>
-            <p><strong>Password:</strong> (leave blank)</p>
+        <div class="hero-section">
+            <h1 class="hero-title">Welcome to CrowdServe! 🎉</h1>
+            <p class="hero-subtitle">A localized, real-time crowdsourcing platform connecting communities with tasks.</p>
+            
+            <div class="action-buttons">
+                <a href="/login" class="btn btn-primary">Login to App</a>
+                <a href="/register" class="btn btn-secondary">Create Account</a>
+            </div>
         </div>
 
-        <div class="links">
-            <h3>Navigation</h3>
-            <a href="/login">Login</a>
-            <a href="/register">Register</a>
+        <div class="dev-card">
+            <div class="dev-header">
+                <i class="fa-solid fa-code" style="color:#0b6fff;"></i>
+                <span class="dev-title">Development Environment Active</span>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Database Console</span>
+                    <a href="/h2-console" target="_blank" style="color:#0b6fff; font-weight:600; text-decoration:none;">
+                        Open H2 Console <i class="fa-solid fa-external-link-alt" style="font-size:0.8em;"></i>
+                    </a>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">JDBC URL</span>
+                    <span class="code-text">jdbc:h2:mem:crowdserve</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Username</span>
+                    <span class="code-text">sa</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Password</span>
+                    <span style="color:#9ca3af; font-style:italic;">(leave blank)</span>
+                </div>
+            </div>
         </div>
 
-        <div class="footer-note">
-            <p><strong>Project Status:</strong> Skeleton created successfully! ✅</p>
-            <p><strong>Next Steps:</strong> Implement service layer, create user registration/login functionality</p>
-        </div>
     </div>
 </body>
 </html>
